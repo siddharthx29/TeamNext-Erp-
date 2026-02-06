@@ -134,7 +134,7 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'teamteamnext@gmail.com'
 
-EMAIL_HOST_PASSWORD = 'qbit xpeb ctwp hxhh'
+EMAIL_HOST_PASSWORD = ''
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
