@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tickets - TeamNext</title>
+  <link rel="stylesheet" href="/static/myapp/css/responsive.css">
+  <link rel="stylesheet" href="/static/myapp/css/theme.css">
+  <script src="/static/myapp/js/theme.js"></script>
+  <style>
+    body {
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: #0b1220;
+      color: #e6eef8;
+      padding: 20px
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #c7def8;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(-2px);
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+      padding: 16px;
+      border-radius: 10px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px
+    }
+
+    .analytics {
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .stat {
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02)
+    }
+
+    .tickets-list {
+      margin-top: 12px
+    }
+
+    .ticket-item {
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.01);
+      margin-bottom: 8px
+    }
+
+    .form-row {
+      display: flex;
+      gap: 8px
+    }
+
+    /* Global 3D styles applied via theme.css */
+
+
+    button {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      color: white
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="back-btn" onclick="window.history.back()" title="Go back to previous page">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+        <h1 style="margin: 0;">Tickets — {{ company_name }}</h1>
+      </div>
+      <div class="user-menu" style="display:flex; align-items:center; gap:12px; cursor:pointer; position:relative"
+        onclick="toggleUserMenu(event)">
+        <div style="text-align:right">
+          <div style="font-weight:700; color:#e2e8f0; font-size:14px">{{ company_name }}</div>
+          <div style="font-size:12px; color:#94a3b8">{{ email }}</div>
+        </div>
+        <div class="avatar"
+          style="width:38px; height:38px; background:linear-gradient(135deg, #667eea, #764ba2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 4px 10px rgba(0,0,0,0.3)">
+          {{ email|slice:":1"|upper }}
+        </div>
+        <div id="userDropdown"
+          style="display:none; position:absolute; right:0; top:48px; background:#1e293b; border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; min-width:180px">
+          <div style="padding:4px 8px 10px 8px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:8px">
+            <div style="font-weight:600; font-size:13px">{{ email }}</div>
+            <div style="font-size:11px; color:#94a3b8">{{ company_name }}</div>
+          </div>
+          <a href="/profile-page/"
+            style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+            onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+            onmouseout="this.style.background='transparent'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Profile</a>
+          <a href="/settings-page/"
+            style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+            onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+            onmouseout="this.style.background='transparent'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            Settings</a>
+          <a href="/logout/"
+            style="display:flex; align-items:center; gap:8px; padding:8px; color:#f87171; text-decoration:none; font-size:14px; border-radius:8px; margin-top:4px"
+            onmouseover="this.style.background='rgba(248,113,113,0.1)'"
+            onmouseout="this.style.background='transparent'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" x2="9" y1="12" y2="12" />
+            </svg>
+            Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <aside>
+        <div class="panel analytics">
+          <div style="font-weight:700">Ticket Analytics</div>
+          <div class="stat">High: <strong style="color:#f87171">{{ analytics.high }}</strong></div>
+          <div class="stat">Medium: <strong style="color:#fbbf24">{{ analytics.medium }}</strong></div>
+          <div class="stat">Low: <strong style="color:#93c5fd">{{ analytics.low }}</strong></div>
+          <div style="margin-top:8px"><a href="/dashboard/" style="color:#c7def8">Back to Dashboard</a></div>
+        </div>
+
+        <div class="panel" style="margin-top:12px">
+          <div style="font-weight:700">Add Developer (OTP verify)</div>
+          <div style="margin-top:8px"><input id="devName" placeholder="Developer name"></div>
+          <div style="margin-top:8px"><input id="devEmail" placeholder="Developer email"></div>
+          <div style="margin-top:8px" class="form-row">
+            <button id="reqOtpBtn">Request OTP</button>
+            <button id="verifyOtpBtn">Verify OTP</button>
+          </div>
+          <div style="margin-top:8px"><input id="devOtp" placeholder="Enter OTP to verify"></div>
+          <div id="devStatus" style="margin-top:8px"></div>
+        </div>
+
+        <div class="panel" style="margin-top:12px">
+          <div style="font-weight:700">Navigation</div>
+          <div style="margin-top:8px"><a href="/projects-page/" style="color:#c7def8">Projects</a></div>
+          <div style="margin-top:4px"><a href="/analytics-page/" style="color:#c7def8">Analytics</a></div>
+          <div style="margin-top:4px"><a href="/settings-page/" style="color:#c7def8">Settings</a></div>
+          <div style="margin-top:8px"><a href="/logout/" style="color:#f5b7b1">Logout</a></div>
+        </div>
+      </aside>
+
+      <main>
+        <div class="panel">
+          <h3>Create Ticket</h3>
+          <div style="margin-top:8px" class="form-row">
+            <select id="projSel">
+              {% for p in projects %}
+              <option value="{{ p.id }}">{{ p.name }}</option>
+              {% endfor %}
+            </select>
+            <select id="prioritySel">
+              <option value="high">High</option>
+              <option value="medium" selected>Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+
+          <div style="margin-top:8px"><input id="tTitle" placeholder="Short title"></div>
+          <div style="margin-top:8px"><textarea id="tDesc" rows="6" placeholder="Describe the issue"></textarea></div>
+
+          <div style="margin-top:8px" class="form-row">
+            <select id="assigneeSel">
+              <option value="">Unassigned</option>
+              {% for dev in developers %}
+              <option value="{{ dev.email }}">{{ dev.name }}</option>
+              {% endfor %}
+            </select>
+            <button id="createBtn">Create Ticket</button>
+          </div>
+
+          <div id="status" style="margin-top:8px"></div>
+        </div>
+
+        <div class="panel tickets-list">
+          <h3>Recent Tickets</h3>
+          {% if recent %}
+          {% for t in recent %}
+          <div class="ticket-item">
+            <div style="display:flex;justify-content:space-between"><strong>{{ t.title }}</strong><span>{{
+                t.priority|upper }}</span></div>
+            <div style="color:#bcd2ea;font-size:13px">Project: {{ t.project.name }} • Assigned: {{
+              t.employee.name|default:'Unassigned' }}</div>
+            <div style="margin-top:6px;color:#d6e8fb">{{ t.description }}</div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div>No tickets yet.</div>
+          {% endif %}
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    async function refreshDevelopers() {
+      try {
+        const res = await fetch('/api/developers/');
+        const data = await res.json();
+        if (data.status === 'ok') {
+          const sel = document.getElementById('assigneeSel');
+          if (!sel) return;
+
+          const first = sel.options[0];
+          sel.innerHTML = '';
+          if (first) sel.appendChild(first);
+          data.developers.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.email;
+            opt.textContent = d.name;
+            sel.appendChild(opt);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+
+    function toggleUserMenu(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('userDropdown');
+      menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+    }
+    document.addEventListener('click', () => {
+      const menu = document.getElementById('userDropdown');
+      if (menu) menu.style.display = 'none';
+    });
+
+    document.getElementById('createBtn').addEventListener('click', async function () {
+      const title = document.getElementById('tTitle').value.trim();
+      const desc = document.getElementById('tDesc').value.trim();
+      const proj = document.getElementById('projSel').value;
+      const priority = document.getElementById('prioritySel').value;
+      const assignee = document.getElementById('assigneeSel').value;
+      const status = document.getElementById('status');
+      if (!title || !desc) { status.textContent = 'Title and description required'; status.style.color = '#ffc2c2'; return; }
+      status.textContent = 'Creating...';
+      try {
+        const res = await fetch('/dashboard/create-ticket/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, description: desc, project_id: proj, priority, assignee })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          status.textContent = 'Ticket created (ID: ' + data.ticket.id + ')'; status.style.color = '#8ef29a';
+          setTimeout(() => location.reload(), 800);
+        } else { status.textContent = data.message || 'Failed'; status.style.color = '#ffc2c2'; }
+      } catch (e) { status.textContent = 'Error'; status.style.color = '#ffc2c2'; }
+    });
+
+    document.getElementById('reqOtpBtn').addEventListener('click', async function () {
+      const name = document.getElementById('devName').value.trim();
+      const email = document.getElementById('devEmail').value.trim();
+      const st = document.getElementById('devStatus');
+      if (!name || !email) { st.textContent = 'Name and email required'; st.style.color = '#ffc2c2'; return; }
+      st.textContent = 'Requesting OTP...';
+      try {
+        const res = await fetch('/api/add-developer/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email }) });
+        const data = await res.json();
+        if (data.status === 'ok') { st.textContent = 'OTP sent to ' + email; st.style.color = '#8ef29a'; }
+        else { st.textContent = data.message || 'Failed'; st.style.color = '#ffc2c2'; }
+      } catch (e) { st.textContent = 'Error'; st.style.color = '#ffc2c2'; }
+    });
+
+    document.getElementById('verifyOtpBtn').addEventListener('click', async function () {
+      const otp = document.getElementById('devOtp').value.trim();
+      const st = document.getElementById('devStatus');
+      if (!otp) { st.textContent = 'Enter OTP'; st.style.color = '#ffc2c2'; return; }
+      st.textContent = 'Verifying...';
+      try {
+        const res = await fetch('/api/verify-developer/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ otp }) });
+        const data = await res.json();
+        if (data.status === 'ok') {
+          st.textContent = 'Developer added: ' + data.developer; st.style.color = '#8ef29a';
+
+          await refreshDevelopers();
+        } else { st.textContent = data.message || 'Failed'; st.style.color = '#ffc2c2'; }
+      } catch (e) { st.textContent = 'Error'; st.style.color = '#ffc2c2'; }
+    });
+
+
+    refreshDevelopers();
+  </script>
+  <script src="/static/myapp/js/responsive.js"></script>
+</body>
+
+</html>

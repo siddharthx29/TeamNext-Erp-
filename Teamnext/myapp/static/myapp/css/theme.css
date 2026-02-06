@@ -1,0 +1,200 @@
+/* Theme System */
+:root {
+    --transition-speed: 0.3s;
+}
+
+[data-theme="light"] {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+[data-theme="light"] body {
+    background: #f1f5f9 !important;
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+/* Minimal/Compact Inputs */
+.compact-input {
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    margin-bottom: 0 !important;
+    width: auto !important;
+    display: inline-block !important;
+}
+
+[data-theme="light"] .panel,
+
+[data-theme="light"] .container,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .dept-card,
+[data-theme="light"] .social-item,
+[data-theme="light"] .chat-container {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+[data-theme="light"] .sidebar {
+    background: #ffffff !important;
+    border-right: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="light"] .nav a {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .nav a:hover,
+[data-theme="light"] .nav a.active {
+    background: #f8fafc !important;
+    color: #6366f1 !important;
+}
+
+/* Inline/Flex Support for Inputs */
+.form-row input,
+.form-row select,
+.form-row textarea,
+.chat-input-area input,
+.flex-input {
+    margin-bottom: 0 !important;
+    flex: 1;
+    width: auto !important;
+}
+
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    box-shadow:
+        inset 1px 1px 3px rgba(0, 0, 0, 0.05),
+        1px 1px 3px rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] textarea:focus {
+    box-shadow:
+        inset 1px 1px 2px rgba(0, 0, 0, 0.1),
+        0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+    border-color: #6366f1 !important;
+}
+
+[data-theme="light"] .stat-label,
+[data-theme="light"] .label,
+[data-theme="light"] p {
+    color: #475569 !important;
+}
+
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] .dept-name,
+[data-theme="light"] .brand .logo {
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .proj-pill {
+    background: #e0e7ff !important;
+    color: #4338ca !important;
+    border: 1px solid #c7d2fe !important;
+}
+
+[data-theme="light"] #bg-canvas {
+    opacity: 0.05 !important;
+}
+
+[data-theme="light"] .avatar {
+    background: linear-gradient(135deg, #6366f1, #818cf8) !important;
+    color: #fff !important;
+}
+
+[data-theme="light"] .message-row.received .bubble {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+[data-theme="light"] .message-row.sent .bubble {
+    background: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+/* Grayscale Mode */
+[data-theme="grayscale"] {
+    filter: grayscale(100%) !important;
+}
+
+/* 3D Dynamic Inputs (Default Dark/Glass Mode) */
+input,
+textarea,
+select {
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.6)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 14px !important;
+    padding: 14px 18px !important;
+    color: #f8fafc !important;
+    font-size: 14px !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    box-shadow:
+        inset 2px 2px 5px rgba(0, 0, 0, 0.5),
+        inset -2px -2px 5px rgba(255, 255, 255, 0.05),
+        0 4px 6px rgba(0, 0, 0, 0.2) !important;
+    outline: none !important;
+    position: relative !important;
+    margin-bottom: 12px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.7)) !important;
+    border-color: rgba(99, 102, 241, 0.5) !important;
+    transform: translateY(-2px) scale(1.01) !important;
+    box-shadow:
+        inset 1px 1px 3px rgba(0, 0, 0, 0.3),
+        0 10px 20px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(99, 102, 241, 0.2) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-color: #6366f1 !important;
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow:
+        0 0 0 4px rgba(99, 102, 241, 0.15),
+        0 15px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(99, 102, 241, 0.3),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Animations for theme switching */
+body,
+.panel,
+.container,
+.sidebar,
+.stat-card,
+.dept-card,
+.nav a,
+input,
+textarea,
+.bubble {
+    transition: background-color var(--transition-speed) ease,
+        color var(--transition-speed) ease,
+        border-color var(--transition-speed) ease,
+        transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow var(--transition-speed) ease,
+        filter var(--transition-speed) ease !important;
+}

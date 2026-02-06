@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Chat - TeamNext</title>
+	<link rel="icon" type="image/svg+xml" href="/static/myapp/images/logo.svg">
+	<link rel="stylesheet" href="/static/myapp/css/responsive.css">
+	<link rel="stylesheet" href="/static/myapp/css/theme.css">
+	<script src="/static/myapp/js/theme.js"></script>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		}
+
+		body {
+			height: 100vh;
+			background: #0b141a;
+
+			color: #e9edef;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+
+		.chat-header {
+			background: #202c33;
+			padding: 10px 16px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+			z-index: 10;
+		}
+
+		.header-left {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.back-btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			background: rgba(255, 255, 255, 0.05);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 8px;
+			color: #aebac1;
+			text-decoration: none;
+			font-size: 14px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			border: none;
+		}
+
+		.back-btn:hover {
+			background: rgba(255, 255, 255, 0.1);
+			transform: translateX(-2px);
+		}
+
+		.avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: #6a7175;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+			color: white;
+			font-size: 18px;
+			text-transform: uppercase;
+		}
+
+		.chat-info h2 {
+			font-size: 16px;
+			font-weight: 500;
+		}
+
+		.chat-info p {
+			font-size: 13px;
+			color: #8696a0;
+		}
+
+		.header-actions {
+			display: flex;
+			gap: 20px;
+			color: #aebac1;
+		}
+
+		.header-actions i {
+			cursor: pointer;
+		}
+
+
+		.chat-container {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+
+			background-repeat: repeat;
+			background-blend-mode: overlay;
+			background-color: #0b141a;
+			overflow: hidden;
+			position: relative;
+		}
+
+
+		.project-bar {
+			background: rgba(32, 44, 51, 0.9);
+			padding: 8px 16px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+			backdrop-filter: blur(10px);
+		}
+
+		#projectSelect {
+			background: #2a3942;
+			border: none;
+			color: #e9edef;
+			padding: 6px 12px;
+			border-radius: 8px;
+			font-size: 14px;
+			outline: none;
+		}
+
+		.members-summary {
+			font-size: 12px;
+			color: #8696a0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+
+		.messages-list {
+			flex: 1;
+			overflow-y: auto;
+			padding: 20px 5%;
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+
+		}
+
+
+		.messages-list::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.messages-list::-webkit-scrollbar-thumb {
+			background: rgba(255, 255, 255, 0.1);
+		}
+
+		.message-row {
+			display: flex;
+			width: 100%;
+			margin-bottom: 2px;
+		}
+
+		.message-row.sent {
+			justify-content: flex-end;
+		}
+
+		.message-row.received {
+			justify-content: flex-start;
+		}
+
+		.bubble {
+			max-width: 65%;
+			padding: 6px 10px 8px 10px;
+			border-radius: 8px;
+			position: relative;
+			font-size: 14.2px;
+			line-height: 1.5;
+			box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+		}
+
+		.sent .bubble {
+			background: #005c4b;
+
+			color: #e9edef;
+			border-top-right-radius: 0;
+		}
+
+		.received .bubble {
+			background: #202c33;
+
+			color: #e9edef;
+			border-top-left-radius: 0;
+		}
+
+		.bubble .sender {
+			display: block;
+			font-weight: 700;
+			font-size: 13px;
+			margin-bottom: 2px;
+			color: #ff9d5c;
+
+		}
+
+		.bubble .text {
+			word-wrap: break-word;
+			white-space: pre-wrap;
+		}
+
+		.bubble .time {
+			float: right;
+			font-size: 11px;
+			color: rgba(233, 237, 239, 0.6);
+			margin-top: 4px;
+			margin-left: 8px;
+		}
+
+		.sent .bubble::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: -8px;
+			width: 0;
+			height: 0;
+			border: 8px solid transparent;
+			border-left-color: #005c4b;
+			border-top: 0;
+		}
+
+		.received .bubble::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -8px;
+			width: 0;
+			height: 0;
+			border: 8px solid transparent;
+			border-right-color: #202c33;
+			border-top: 0;
+		}
+
+
+		.date-divider {
+			align-self: center;
+			background: #182229;
+			padding: 5px 12px;
+			border-radius: 7px;
+			font-size: 12px;
+			color: #8696a0;
+			margin: 12px 0;
+			text-transform: uppercase;
+			box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+		}
+
+
+		.input-area {
+			background: #202c33;
+			padding: 8px 16px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.input-wrapper {
+			flex: 1;
+			background: #2a3942;
+			border-radius: 20px;
+			display: flex;
+			align-items: center;
+			padding: 0 12px;
+		}
+
+		#chatInput {
+			flex: 1;
+			background: transparent;
+			border: none;
+			color: #e1e1e1;
+			padding: 10px 8px;
+			font-size: 15px;
+			outline: none;
+		}
+
+		.send-btn {
+			width: 45px;
+			height: 45px;
+			border-radius: 50%;
+			background: #00a884;
+			border: none;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: transform 0.2s;
+		}
+
+		.send-btn:hover {
+			transform: scale(1.05);
+			background: #008f72;
+		}
+
+		.send-btn svg {
+			width: 20px;
+			height: 20px;
+			fill: currentColor;
+		}
+
+
+		.invite-modal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.8);
+			z-index: 100;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.modal-content {
+			background: #202c33;
+			padding: 24px;
+			border-radius: 12px;
+			width: 400px;
+			max-width: 90%;
+		}
+
+		.modal-content h3 {
+			margin-bottom: 20px;
+			color: #e9edef;
+		}
+
+		.modal-content input {
+			width: 100%;
+			padding: 12px;
+			margin-bottom: 12px;
+			background: #2a3942;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 8px;
+			color: white;
+			outline: none;
+		}
+
+		.modal-buttons {
+			display: flex;
+			gap: 12px;
+			justify-content: flex-end;
+			margin-top: 12px;
+		}
+
+		.modal-buttons button {
+			padding: 8px 16px;
+			border-radius: 8px;
+			border: none;
+			cursor: pointer;
+			font-weight: 500;
+		}
+
+		.btn-cancel {
+			background: transparent;
+			color: #8696a0;
+		}
+
+		.btn-confirm {
+			background: #00a884;
+			color: white;
+		}
+	</style>
+</head>
+
+<body>
+
+	<header class="chat-header">
+		<div class="header-left">
+			<button onclick="window.history.back()" class="back-btn" title="Go back to previous page">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+					stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M19 12H5M12 19l-7-7 7-7" />
+				</svg>
+				Back
+			</button>
+			<div class="avatar" id="headerAvatar" style="background: linear-gradient(135deg, #00a884, #005c4b);">P</div>
+			<div class="chat-info">
+				<h2 id="currentProjectName" style="color:#e9edef">Project Name</h2>
+				<p id="membersCount" style="color:#8696a0">Loading members...</p>
+			</div>
+		</div>
+		<div class="header-actions" style="display:flex; align-items:center; gap:16px">
+			<span onclick="toggleInviteModal()" title="Invite Members"
+				style="cursor:pointer; font-size:20px; color:#aebac1; margin-right:10px; display: flex; align-items: center;">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+					stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+					<circle cx="9" cy="7" r="4" />
+					<line x1="19" x2="19" y1="8" y2="14" />
+					<line x1="22" x2="16" y1="11" y2="11" />
+				</svg>
+			</span>
+
+			<div class="user-menu" style="display:flex; align-items:center; gap:10px; cursor:pointer; position:relative"
+				onclick="toggleUserMenu(event)">
+				<div style="text-align:right">
+					<div style="font-weight:700; color:#e2e8f0; font-size:13px">{{ company_name }}</div>
+					<div style="font-size:11px; color:#94a3b8">{{ email }}</div>
+				</div>
+				<div class="avatar"
+					style="width:34px; height:34px; background:linear-gradient(135deg, #667eea, #764ba2); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; box-shadow: 0 2px 8px rgba(0,0,0,0.4)">
+					{{ email|slice:":1"|upper }}
+				</div>
+				<div id="userDropdown"
+					style="display:none; position:absolute; right:0; top:42px; background:#1e293b; border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:10px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; min-width:170px">
+					<div
+						style="padding:4px 8px 8px 8px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:6px">
+						<div style="font-weight:600; font-size:12px; color:#e2e8f0">{{ email }}</div>
+						<div style="font-size:10px; color:#94a3b8">{{ company_name }}</div>
+					</div>
+					<a href="/dashboard/"
+						style="display:flex; align-items:center; gap:8px; padding:6px 8px; color:#e2e8f0; text-decoration:none; font-size:13px; border-radius:6px"
+						onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<rect width="7" height="9" x="3" y="3" rx="1" />
+							<rect width="7" height="5" x="14" y="3" rx="1" />
+							<rect width="7" height="9" x="14" y="12" rx="1" />
+							<rect width="7" height="5" x="3" y="15" rx="1" />
+						</svg>
+						Dashboard</a>
+					<a href="/profile-page/"
+						style="display:flex; align-items:center; gap:8px; padding:6px 8px; color:#e2e8f0; text-decoration:none; font-size:13px; border-radius:6px"
+						onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+							<circle cx="12" cy="7" r="4" />
+						</svg>
+						Profile</a>
+					<a href="/logout/"
+						style="display:flex; align-items:center; gap:8px; padding:6px 8px; color:#f87171; text-decoration:none; font-size:13px; border-radius:6px; margin-top:2px"
+						onmouseover="this.style.background='rgba(248,113,113,0.1)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+							<polyline points="16 17 21 12 16 7" />
+							<line x1="21" x2="9" y1="12" y2="12" />
+						</svg>
+						Logout</a>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<div class="chat-container">
+		<div class="project-bar">
+			<label for="projectSelect">Chat Group:</label>
+			<select id="projectSelect">
+				{% for p in projects %}
+				<option value="{{ p.id }}">{{ p.name }}</option>
+				{% endfor %}
+			</select>
+			<div class="members-summary" id="membersSummary"></div>
+		</div>
+
+		<div class="messages-list" id="chatBox">
+
+			<div class="date-divider">Today</div>
+		</div>
+
+		<div class="input-area">
+			<div class="input-wrapper">
+				<input type="text" id="chatInput" placeholder="Type a message" autocomplete="off">
+			</div>
+			<button class="send-btn" id="sendChatBtn">
+				<svg viewBox="0 0 24 24">
+					<path d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z">
+					</path>
+				</svg>
+			</button>
+		</div>
+	</div>
+
+
+	<div class="invite-modal" id="inviteModal">
+		<div class="modal-content">
+			<h3>Invite Member</h3>
+			<input type="email" id="memberEmail" placeholder="Email address">
+			<input type="text" id="memberName" placeholder="Full name (optional)">
+			<div class="modal-buttons">
+				<button class="btn-cancel" onclick="toggleInviteModal()">Cancel</button>
+				<button class="btn-confirm" id="confirmInviteBtn">Invite</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const projectSelect = document.getElementById('projectSelect');
+		const chatBox = document.getElementById('chatBox');
+		const chatInput = document.getElementById('chatInput');
+		const sendBtn = document.getElementById('sendChatBtn');
+		const currentProjectName = document.getElementById('currentProjectName');
+		const membersCount = document.getElementById('membersCount');
+		const headerAvatar = document.getElementById('headerAvatar');
+		const membersSummary = document.getElementById('membersSummary');
+		const inviteModal = document.getElementById('inviteModal');
+
+		const currentUserEmail = "{{ email }}";
+
+		function toggleInviteModal() {
+			inviteModal.style.display = (inviteModal.style.display === 'flex') ? 'none' : 'flex';
+		}
+
+		async function loadMembers(projId) {
+			try {
+				const res = await fetch(`/api/projects/${projId}/members/`);
+				const data = await res.json();
+				if (data.status === 'ok') {
+					const list = data.members;
+					membersCount.textContent = `${list.length} members`;
+					membersSummary.textContent = list.map(m => m.name || m.email.split('@')[0]).join(', ');
+				}
+			} catch (e) {
+				console.error("Failed to load members:", e);
+			}
+		}
+
+		async function loadChat() {
+			const projId = projectSelect.value;
+			const projName = projectSelect.options[projectSelect.selectedIndex].text;
+
+			currentProjectName.textContent = projName;
+			headerAvatar.textContent = projName.charAt(0);
+
+			try {
+				const res = await fetch(`/api/chat/messages/?project=${encodeURIComponent(projId)}`);
+				const data = await res.json();
+				if (data.status === 'ok') {
+					chatBox.innerHTML = '<div class="date-divider">Today</div>';
+
+					data.messages.forEach(msg => {
+						const isSent = msg.user === currentUserEmail;
+						const row = document.createElement('div');
+						row.className = `message-row ${isSent ? 'sent' : 'received'}`;
+
+						const time = new Date(msg.time * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+						row.innerHTML = `
+                            <div class="bubble">
+                                ${!isSent ? `<span class="sender">${msg.user.split('@')[0]}</span>` : ''}
+                                <div class="text">${escapeHtml(msg.text)}</div>
+                                <span class="time">${time}</span>
+                            </div>
+                        `;
+						chatBox.appendChild(row);
+					});
+
+					chatBox.scrollTop = chatBox.scrollHeight;
+				}
+			} catch (e) {
+				console.error("Failed to load chat:", e);
+			}
+		}
+
+		function escapeHtml(text) {
+			const div = document.createElement('div');
+			div.textContent = text;
+			return div.innerHTML;
+		}
+
+		async function sendMessage() {
+			const text = chatInput.value.trim();
+			if (!text) return;
+
+			const projId = projectSelect.value;
+			try {
+				const res = await fetch(`/api/chat/messages/?project=${encodeURIComponent(projId)}`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ text, project: projId })
+				});
+				const data = await res.json();
+				if (data.status === 'ok') {
+					chatInput.value = '';
+					loadChat();
+				} else {
+					alert(data.message || 'Error sending message');
+				}
+			} catch (e) {
+				console.error("Post error:", e);
+			}
+		}
+
+		sendBtn.addEventListener('click', sendMessage);
+		chatInput.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') sendMessage();
+		});
+
+		projectSelect.addEventListener('change', () => {
+			loadMembers(projectSelect.value);
+			loadChat();
+		});
+
+		document.getElementById('confirmInviteBtn').addEventListener('click', async () => {
+			const email = document.getElementById('memberEmail').value.trim();
+			const name = document.getElementById('memberName').value.trim();
+			const proj = projectSelect.value;
+
+			if (!email) return alert('Email is required');
+
+			try {
+				const res = await fetch(`/api/projects/${proj}/members/`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email, name })
+				});
+				const data = await res.json();
+				if (data.status === 'ok') {
+					document.getElementById('memberEmail').value = '';
+					document.getElementById('memberName').value = '';
+					toggleInviteModal();
+					loadMembers(proj);
+				} else {
+					alert(data.message || 'Invite failed');
+				}
+			} catch (e) {
+				console.error(e);
+			}
+		});
+
+
+		loadChat();
+		loadMembers(projectSelect.value);
+
+
+		function toggleUserMenu(e) {
+			e.stopPropagation();
+			const menu = document.getElementById('userDropdown');
+			menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+		}
+		document.addEventListener('click', () => {
+			const menu = document.getElementById('userDropdown');
+			if (menu) menu.style.display = 'none';
+		});
+
+
+		setInterval(loadChat, 5000);
+	</script>
+	<script src="/static/myapp/js/responsive.js"></script>
+</body>
+
+</html>

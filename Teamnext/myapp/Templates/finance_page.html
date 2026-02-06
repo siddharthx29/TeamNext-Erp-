@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance & Accounts - TeamNext</title>
+    <link rel="stylesheet" href="/static/myapp/css/responsive.css">
+    <link rel="stylesheet" href="/static/myapp/css/theme.css">
+    <script src="/static/myapp/js/theme.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #020617;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .app-shell {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .brand .logo {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav a.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+        }
+
+        .main-content {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        canvas#bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">TeamNext</div>
+            </div>
+            <nav class="nav">
+                <a href="/dashboard/">Dashboard</a>
+                <a href="/projects-page/">Departments</a>
+                <a href="/finance-page/" class="active">Finance</a>
+                <a href="/hr-page/">HR Management</a>
+                <a href="/inventory-page/">Inventory</a>
+                <a href="/reports-page/">Reports</a>
+                <a href="/chat-page/">Communication</a>
+                <a href="/email-page/">Email Center</a>
+                <a href="/tickets-page/">Tickets</a>
+                <a href="/leaves-page/">Leaves</a>
+                <a href="/analytics-page/">Analytics</a>
+                <a href="/logout/" style="margin-top: auto; color: #f87171;">Logout</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <div class="header">
+                <div>
+                    <h1 style="font-size: 24px; font-weight: 800;">Finance & Accounts</h1>
+                    <p style="color: #94a3b8; font-size: 14px;">Monitor your company's financial health</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="text-align: right;">
+                        <div style="font-weight: 600;">{{ company_name }}</div>
+                        <div style="font-size: 12px; color: #94a3b8;">{{ email }}</div>
+                    </div>
+                    <div class="avatar">{{ email|slice:":1"|upper }}</div>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="stat-card">
+                    <div class="stat-label">Total Revenue (Net)</div>
+                    <div class="stat-value" id="stat-revenue" style="color: #34d399;">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Expenses</div>
+                    <div class="stat-value" id="stat-expenses" style="color: #f87171;">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Payroll (Monthly)</div>
+                    <div class="stat-value" id="stat-payroll" style="color: #6366f1;">$0</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+                <div class="panel" style="margin-bottom: 0;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0;">Payroll & Teams</h2>
+                        <button class="btn-primary" id="payoutSalaryBtn"
+                            style="padding: 6px 12px; font-size: 12px;">Process Payroll</button>
+                    </div>
+                    <div id="payrollList" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Payroll entries will be loaded here -->
+                        <div
+                            style="padding: 12px; background: rgba(255,255,255,0.02); border-radius: 10px; color: #94a3b8; text-align: center; font-size: 13px;">
+                            No payroll records found for this month.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-bottom: 0;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0;">Vendor Payments</h2>
+                        <button class="btn-primary" id="addBillBtn"
+                            style="padding: 6px 12px; font-size: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">Add
+                            Bill</button>
+                    </div>
+                    <div id="vendorList" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div
+                            style="padding: 12px; background: rgba(255,255,255,0.02); border-radius: 10px; color: #94a3b8; text-align: center; font-size: 13px;">
+                            All clear! No pending vendor payments.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0;">Recent Transactions</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-primary" onclick="exportFinance('csv')"
+                            style="padding: 6px 12px; font-size: 12px; background: #059669;">Export CSV</button>
+                        <button class="btn-primary" onclick="generateReport('Tax Report')"
+                            style="padding: 6px 12px; font-size: 12px; background: #d946ef;">Tax Report</button>
+                    </div>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; color: #e2e8f0;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                            <th style="padding: 12px;">Date</th>
+                            <th style="padding: 12px;">Type</th>
+                            <th style="padding: 12px;">Entity</th>
+                            <th style="padding: 12px;">Amount</th>
+                            <th style="padding: 12px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTableBody">
+                        <!-- Transactions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; gap: 20px;">
+                <div class="panel" style="flex: 1;">
+                    <h3>Tax & Compliance (GST)</h3>
+                    <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="stat-card" style="padding: 15px;">
+                            <div class="stat-label">Payable GST</div>
+                            <div id="payable-gst" style="font-size: 18px; font-weight: 700; color: #f87171;">$0</div>
+                        </div>
+                        <div class="stat-card" style="padding: 15px;">
+                            <div class="stat-label">Input Tax Credit</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #34d399;">$0</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 12px; color: #94a3b8; margin-top: 12px;">*Calculated based on 18% standard GST
+                        rate.</p>
+                </div>
+                <div class="panel" style="flex: 1;">
+                    <h3>Quick Actions</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                        <button class="btn-primary" id="createInvoiceBtn">Create Invoice</button>
+                        <button class="btn-primary" id="logExpenseBtn"
+                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">Log
+                            Expense</button>
+                        <button class="btn-primary" onclick="reconcileBank()"
+                            style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1);">Bank
+                            Reconcile</button>
+                    </div>
+                    <div id="statusMsg" style="margin-top: 12px; font-size: 13px; text-align: center;"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Finance Actions -->
+    <div id="financeModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(8px);">
+        <div class="panel"
+            style="width: 450px; max-width: 90%; background: #0f172a; border: 1px solid rgba(99, 102, 241, 0.2);">
+            <h2 id="modalTitle" style="margin-bottom: 20px; font-size: 20px;">Action</h2>
+            <div id="modalFields" style="display: flex; flex-direction: column; gap: 15px;">
+                <div id="field1Container">
+                    <label id="label1"
+                        style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px;">Entity</label>
+                    <input type="text" id="field1" placeholder="Client / Vendor Name"
+                        style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.3); color:white; outline: none;">
+                </div>
+                <div id="field2Container">
+                    <label id="label2"
+                        style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px;">Amount ($)</label>
+                    <input type="number" id="field2" placeholder="0.00"
+                        style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.3); color:white; outline: none;">
+                </div>
+                <div id="gstFieldContainer" style="display: none;">
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px;">GST Rate
+                        (%)</label>
+                    <select id="gstRate"
+                        style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.3); color:white; outline: none;">
+                        <option value="0">0% (Nil)</option>
+                        <option value="5">5% (Essential)</option>
+                        <option value="12">12% (Standard Low)</option>
+                        <option value="18" selected>18% (Standard)</option>
+                        <option value="28">28% (Luxury)</option>
+                    </select>
+                </div>
+                <div id="categoryFieldContainer" style="display: none;">
+                    <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px;">Category</label>
+                    <input type="text" id="expenseCategory" placeholder="e.g. Marketing, Rent, Travel"
+                        style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.3); color:white; outline: none;">
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 25px;">
+                <button class="btn-primary" id="confirmActionBtn" style="flex: 2;">Confirm & Save</button>
+                <button class="btn-primary" onclick="closeModal()"
+                    style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = Array.from({ length: 50 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                size: Math.random() * 2
+            }));
+        }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.fillStyle = 'rgba(99,102,241,0.2)';
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        window.onresize = init;
+        init(); animate();
+
+        // Finance Logic
+        const modal = document.getElementById('financeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const field1 = document.getElementById('field1');
+        const field2 = document.getElementById('field2');
+        const label1 = document.getElementById('label1');
+        const label2 = document.getElementById('label2');
+        const statusMsg = document.getElementById('statusMsg');
+
+        const gstContainer = document.getElementById('gstFieldContainer');
+        const categoryContainer = document.getElementById('categoryFieldContainer');
+
+        let currentAction = '';
+
+        async function loadFinanceData() {
+            try {
+                const res = await fetch('/api/finance/data/');
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    document.getElementById('stat-revenue').textContent = '$' + data.revenue.toLocaleString();
+                    document.getElementById('stat-expenses').textContent = '$' + data.expenses.toLocaleString();
+                    document.getElementById('stat-payroll').textContent = '$' + data.payroll.toLocaleString();
+
+                    const tbody = document.getElementById('transactionTableBody');
+                    tbody.innerHTML = '';
+                    data.recent.forEach(txn => {
+                        const tr = document.createElement('tr');
+                        tr.style.borderBottom = '1px solid rgba(255,255,255,0.02)';
+                        tr.innerHTML = `
+                            <td style="padding: 12px;">${txn.date}</td>
+                            <td style="padding: 12px;">${txn.type}</td>
+                            <td style="padding: 12px;">${txn.entity}</td>
+                            <td style="padding: 12px;">$${txn.amount.toLocaleString()}</td>
+                            <td style="padding: 12px;"><span style="color: ${txn.status === 'paid' || txn.status === 'Paid' ? '#34d399' : '#fbbf24'}">${txn.status}</span></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    // Update GST Payable (placeholder logic for demo)
+                    document.getElementById('payable-gst').textContent = '$' + (data.revenue * 0.18).toLocaleString();
+                }
+            } catch (e) { console.error('Data load error', e); }
+        }
+
+        function openModal(action, title, l1, l2) {
+            currentAction = action;
+            modalTitle.textContent = title;
+            label1.textContent = l1;
+            label2.textContent = l2;
+            field1.value = '';
+            field2.value = '';
+
+            gstContainer.style.display = action === 'invoice' ? 'block' : 'none';
+            categoryContainer.style.display = action === 'expense' ? 'block' : 'none';
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        document.getElementById('createInvoiceBtn').onclick = () => openModal('invoice', 'Create New Invoice', 'Client Name', 'Base Amount ($)');
+        document.getElementById('logExpenseBtn').onclick = () => openModal('expense', 'Log Business Expense', 'Description', 'Amount ($)');
+        document.getElementById('payoutSalaryBtn').onclick = () => openModal('salary', 'Salary Payout Record', 'Employee Name', 'Net Salary ($)');
+        document.getElementById('addBillBtn').onclick = () => openModal('bill', 'Register New Bill', 'Vendor Name', 'Bill Amount ($)');
+
+        document.getElementById('confirmActionBtn').onclick = async () => {
+            const val1 = field1.value.trim();
+            const val2 = field2.value.trim();
+            if (!val1 || !val2) return alert('Please fill all fields');
+
+            const urls = {
+                'invoice': '/api/finance/invoice/',
+                'expense': '/api/finance/expense/',
+                'salary': '/api/finance/salary/',
+                'bill': '/api/finance/bill/'
+            };
+
+            const bodyData = {
+                entity: val1,
+                amount: val2
+            };
+
+            if (currentAction === 'invoice') bodyData.gst_rate = document.getElementById('gstRate').value;
+            if (currentAction === 'expense') bodyData.category = document.getElementById('expenseCategory').value;
+
+            try {
+                const res = await fetch(urls[currentAction], {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    statusMsg.textContent = data.message;
+                    statusMsg.style.color = '#34d399';
+                    closeModal();
+                    loadFinanceData();
+                    setTimeout(() => statusMsg.textContent = '', 4000);
+                } else {
+                    alert(data.message || 'Error occurred');
+                }
+            } catch (e) { alert('Connection error'); }
+        };
+
+        function exportFinance(format) {
+            window.location.href = `/api/finance/export/?format=${format}`;
+        }
+
+        async function generateReport(type) {
+            statusMsg.textContent = `Generating ${type}...`;
+            try {
+                const res = await fetch('/api/reports/generate/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ report_type: type, format: 'pdf' })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    const blob = b64toBlob(data.file_data, data.content_type);
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${type}.pdf`;
+                    a.click();
+                    statusMsg.textContent = 'Report generated!';
+                }
+            } catch (e) {
+                statusMsg.textContent = 'Error generating report';
+                console.error(e);
+            }
+        }
+
+        function reconcileBank() {
+            alert('Bank reconciliation module activated. Syncing with bank statements...');
+            // In a real app, this would trigger a flow to upload CSV/link API
+        }
+
+        function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+            const byteCharacters = atob(b64Data);
+            const byteArrays = [];
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                const slice = byteCharacters.slice(offset, offset + sliceSize);
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+            return new Blob(byteArrays, { type: contentType });
+        }
+
+        // Initial load
+        window.onload = loadFinanceData;
+    </script>
+</body>
+
+</html>

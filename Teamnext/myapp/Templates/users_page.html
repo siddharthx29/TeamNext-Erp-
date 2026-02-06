@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Users - TeamNext</title>
+	<link rel="stylesheet" href="/static/myapp/css/theme.css">
+	<script src="/static/myapp/js/theme.js"></script>
+	<style>
+		body {
+			font-family: Inter, Arial;
+			background: #071127;
+			color: #e6eef8;
+			padding: 20px
+		}
+
+		.panel {
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+			padding: 16px;
+			border-radius: 10px;
+			max-width: 900px;
+			margin: 0 auto
+		}
+	</style>
+</head>
+
+<body>
+	<div class="panel">
+		<div
+			style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.05)">
+			<h2>Users — {{ company_name }}</h2>
+			<div class="user-menu" style="display:flex; align-items:center; gap:12px; cursor:pointer; position:relative"
+				onclick="toggleUserMenu(event)">
+				<div style="text-align:right">
+					<div style="font-weight:700; color:#e2e8f0; font-size:14px">{{ company_name }}</div>
+					<div style="font-size:12px; color:#94a3b8">{{ email }}</div>
+				</div>
+				<div class="avatar"
+					style="width:38px; height:38px; background:linear-gradient(135deg, #667eea, #764ba2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 4px 10px rgba(0,0,0,0.3)">
+					{{ email|slice:":1"|upper }}
+				</div>
+				<div id="userDropdown"
+					style="display:none; position:absolute; right:0; top:48px; background:#1e293b; border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; min-width:180px">
+					<div
+						style="padding:4px 8px 10px 8px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:8px">
+						<div style="font-weight:600; font-size:13px">{{ email }}</div>
+						<div style="font-size:11px; color:#94a3b8">{{ company_name }}</div>
+					</div>
+					<a href="/dashboard/"
+						style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+						onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<rect width="7" height="9" x="3" y="3" rx="1" />
+							<rect width="7" height="5" x="14" y="3" rx="1" />
+							<rect width="7" height="9" x="14" y="12" rx="1" />
+							<rect width="7" height="5" x="3" y="15" rx="1" />
+						</svg>
+						Dashboard</a>
+					<a href="/profile-page/"
+						style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+						onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+							<circle cx="12" cy="7" r="4" />
+						</svg>
+						Profile</a>
+					<a href="/settings-page/"
+						style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+						onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path
+								d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+							<circle cx="12" cy="12" r="3" />
+						</svg>
+						Settings</a>
+					<a href="/logout/"
+						style="display:flex; align-items:center; gap:8px; padding:8px; color:#f87171; text-decoration:none; font-size:14px; border-radius:8px; margin-top:4px"
+						onmouseover="this.style.background='rgba(248,113,113,0.1)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+							<polyline points="16 17 21 12 16 7" />
+							<line x1="21" x2="9" y1="12" y2="12" />
+						</svg>
+						Logout</a>
+				</div>
+			</div>
+		</div>
+
+		<div style="margin-top:12px">
+			<strong>Users</strong>
+			<div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+				<label style="color:#9fbadf">Project:</label>
+				<select id="projectSelect">
+
+					{% for p in projects %}
+					<option value="{{ p.id }}">{{ p.name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<ul id="userList"></ul>
+
+			<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap" class="form-row">
+
+				<input id="inviteName" placeholder="Name">
+
+				<input id="inviteEmail" placeholder="Email">
+
+				<input id="inviteRole" placeholder="Role">
+
+				<button id="inviteBtn">Invite (OTP)</button>
+			</div>
+			<div id="inviteStatus" style="margin-top:8px"></div>
+		</div>
+
+		<style>
+			#userList li {
+				padding: 10px;
+				border-radius: 8px;
+				background: rgba(255, 255, 255, 0.02);
+				margin-top: 8px;
+				display: flex;
+				justify-content: space-between
+			}
+
+			.user-meta {
+				color: #9fbadf;
+				font-size: 13px
+			}
+		</style>
+
+		<script>
+			async function loadUsers() {
+				try {
+					const res = await fetch('/api/users/');
+					const data = await res.json();
+					if (data.status === 'ok') {
+						const ul = document.getElementById('userList'); ul.innerHTML = '';
+						data.users.forEach(u => {
+							const li = document.createElement('li');
+							const projectBadges = (u.projects || []).map(p => `<span style="background:rgba(99,102,241,0.1); color:#818cf8; padding:2px 6px; border-radius:4px; font-size:11px; margin-right:4px">${p}</span>`).join('');
+							li.innerHTML = `<div><strong>${u.name || u.email}</strong><div class="user-meta">${u.role || '-'} • ${u.department || ''}</div><div style="margin-top:6px">${projectBadges}</div></div><div><small>${u.email}</small><div style="margin-top:8px"><button class='editSettingsBtn' data-email='${u.email}' data-assigned='${JSON.stringify(u.projects || [])}'>Manage Projects</button></div></div>`;
+							ul.appendChild(li);
+						});
+					}
+				} catch (e) { console.error(e) }
+			}
+
+			document.getElementById('inviteBtn').addEventListener('click', async function () {
+				const name = document.getElementById('inviteName').value.trim();
+				const email = (document.getElementById('inviteEmail').value || '').trim();
+				const role = document.getElementById('inviteRole').value.trim();
+				const st = document.getElementById('inviteStatus');
+				if (!name || !email) { st.textContent = 'Name and email required'; st.style.color = '#ffc2c2'; return; }
+				st.textContent = 'Requesting OTP...';
+				try {
+					const res = await fetch('/api/add-developer/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email }) });
+					const data = await res.json();
+					if (data.status === 'ok') { st.textContent = 'OTP sent to ' + email; st.style.color = '#8ef29a'; loadUsers(); }
+					else { st.textContent = data.message || 'Failed'; st.style.color = '#ffc2c2'; }
+				} catch (e) { st.textContent = 'Error'; st.style.color = '#ffc2c2'; }
+			});
+
+			loadUsers();
+		</script>
+		<script>
+
+			document.addEventListener('click', function (ev) {
+				if (!ev.target.classList.contains('editSettingsBtn')) return;
+				const email = ev.target.getAttribute('data-email');
+				const assignedProjects = JSON.parse(ev.target.getAttribute('data-assigned') || '[]');
+				const currentProj = document.getElementById('projectSelect').value;
+
+
+				fetch('/api/projects/' + encodeURIComponent(currentProj) + '/members/' + encodeURIComponent(email) + '/settings/').then(r => r.json()).then(data => {
+					if (data.status !== 'ok') return alert(data.message || 'Unable to load settings');
+					const s = data.settings;
+
+
+					const dlg = document.createElement('div'); dlg.style.position = 'fixed'; dlg.style.left = '50%'; dlg.style.top = '50%'; dlg.style.transform = 'translate(-50%,-50%)'; dlg.style.background = '#0d1b3d'; dlg.style.padding = '24px'; dlg.style.borderRadius = '12px'; dlg.style.zIndex = 9999; dlg.style.boxShadow = '0 20px 50px rgba(0,0,0,0.7)'; dlg.style.border = '1px solid rgba(255,255,255,0.1)'; dlg.style.minWidth = '320px';
+
+
+					let projHtml = '<div style="margin-bottom:12px;color:#cfe9ff;font-weight:600">Assign & Allow Access:</div>';
+					const projOpts = Array.from(document.getElementById('projectSelect').options);
+
+					// Fetch current assignments with is_allowed status
+					// For simplicity in this demo, we use the assignedProjects list (which currently only contains names)
+					// In a real app we'd fetch the exact ProjectMember status.
+
+					projOpts.forEach(o => {
+						const isAssigned = assignedProjects.includes(o.text);
+						projHtml += `
+						<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;background:rgba(255,255,255,0.03);padding:8px;border-radius:8px'>
+							<span style="font-size:14px;color:#e2e8f0">${o.text}</span>
+							<label style='display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#94a3b8'>
+								<input type='checkbox' class='s_proj_membership_chk' data-id='${o.value}' ${isAssigned ? 'checked' : ''}>
+								Allow Access
+							</label>
+						</div>`;
+					});
+
+					dlg.innerHTML = `<h3 style='margin-top:0;margin-bottom:16px;color:#fff;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px'>Manage ${email}</h3>` + projHtml + `
+			<div style="margin-top:16px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px">
+				<div style="margin-bottom:8px;color:#cfe9ff;font-weight:600;font-size:13px">Selected Project Permissions (${document.getElementById('projectSelect').selectedOptions[0].text}):</div>
+				<label style='display:block;margin-bottom:8px;font-size:13px'><input type='checkbox' id='s_is_admin' ${s.is_admin ? 'checked' : ''}> Is Project Admin</label>
+				<label style='display:block;margin-bottom:8px;font-size:13px'><input type='checkbox' id='s_can_approve' ${s.can_approve_leaves ? 'checked' : ''}> Can Approve Leaves</label>
+			</div>
+			<div style='margin-top:20px;display:flex;gap:12px;justify-content:flex-end'><button id='closeSettingsBtn' style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:8px 16px; border-radius:6px; cursor:pointer">Close</button><button id='saveSettingsBtn' style="background:#6366f1; border:none; color:#fff; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer">Save All</button></div>`;
+					document.body.appendChild(dlg);
+
+					document.getElementById('closeSettingsBtn').addEventListener('click', () => dlg.remove());
+					document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+
+						const projChecks = Array.from(dlg.querySelectorAll('.s_proj_membership_chk'));
+						for (const chk of projChecks) {
+							const pId = chk.getAttribute('data-id');
+							const pName = chk.parentElement.textContent.trim();
+							const wasAssigned = assignedProjects.includes(pName); // assigned means member + allowed
+							const nowAllowed = chk.checked;
+
+							// Update member settings (is_allowed)
+							await fetch('/api/projects/' + pId + '/members/' + encodeURIComponent(email) + '/settings/', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({ is_allowed: nowAllowed })
+							});
+
+							// Also ensure they are a member if allowed
+							if (nowAllowed && !wasAssigned) {
+								await fetch(`/api/projects/${pId}/members/`, {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify({ email: email, action: 'add' })
+								});
+							}
+						}
+
+						const payload = {
+							is_admin: !!document.getElementById('s_is_admin').checked,
+							can_approve_leaves: !!document.getElementById('s_can_approve').checked
+						};
+						await fetch('/api/projects/' + encodeURIComponent(currentProj) + '/members/' + encodeURIComponent(email) + '/settings/', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify(payload)
+						});
+
+						alert('Assignments and permissions saved');
+						dlg.remove();
+						loadUsers();
+					});
+				}).catch(e => { console.error(e); alert('Error'); });
+			});
+
+
+			document.getElementById('projectSelect').addEventListener('change', function () { loadUsers(); });
+		</script>
+	</div>
+
+	<script>
+
+		function toggleUserMenu(e) {
+			e.stopPropagation();
+			const menu = document.getElementById('userDropdown');
+			menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+		}
+		document.addEventListener('click', () => {
+			const menu = document.getElementById('userDropdown');
+			if (menu) menu.style.display = 'none';
+		});
+	</script>
+</body>
+
+</html>

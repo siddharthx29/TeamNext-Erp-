@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamNext - Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="/static/myapp/images/logo.svg">
+    <link rel="stylesheet" href="/static/myapp/css/responsive.css">
+    <link rel="stylesheet" href="/static/myapp/css/theme.css">
+    <script src="/static/myapp/js/theme.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #020617;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .app-shell {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .brand .logo {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav a.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+        }
+
+        .main-content {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .dept-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .dept-name {
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .proj-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .collab-hub {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+        }
+
+        .chat-container {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Removed inline input styles to use global 3D dynamic styles */
+
+
+        button.btn-primary {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .social-pulse {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .social-item {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">TeamNext</div>
+            </div>
+            <nav class="nav">
+                <a href="/dashboard/" class="active">Dashboard</a>
+                <a href="/projects-page/">Departments</a>
+                <a href="/finance-page/">Finance</a>
+                <a href="/hr-page/">HR Management</a>
+                <a href="/inventory-page/">Inventory</a>
+                <a href="/reports-page/">Reports</a>
+                <a href="/chat-page/">Communication</a>
+                <a href="/email-page/">Email Center</a>
+                <a href="/tickets-page/">Tickets</a>
+                <a href="/leaves-page/">Leaves</a>
+                <a href="/analytics-page/">Analytics</a>
+                {% if is_company_admin %}
+                <a href="/users-page/">Users & Access</a>
+                <a href="/settings-page/">Settings</a>
+                {% endif %}
+                <a href="/logout/" style="margin-top: auto; color: #f87171;">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <div>
+                    <h1 style="font-size: 24px; font-weight: 800;">Command Center</h1>
+                    <p style="color: #94a3b8; font-size: 14px;">Welcome back, {{ email }}</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="text-align: right;">
+                        <div style="font-weight: 600;">{{ company_name }}</div>
+                        <div style="font-size: 12px; color: #94a3b8;">{{ email }}</div>
+                    </div>
+                    <div class="avatar">{{ email|slice:":1"|upper }}</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Active Tickets</div>
+                    <div class="stat-value" style="color: #818cf8;">{{ tickets_count }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Critical Priority</div>
+                    <div class="stat-value" style="color: #f87171;">{{ analytics.high }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Med/Low</div>
+                    <div class="stat-value" style="color: #fbbf24;">{{ analytics.medium|add:analytics.low }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Productivity</div>
+                    <div class="stat-value" style="color: #34d399;">92%</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Organizational Structure</h2>
+            <div class="dept-grid">
+                {% for item in departments %}
+                <div class="dept-card">
+                    <div class="dept-name">
+                        {{ item.dept.name }}
+                        <span style="font-size: 10px; color: #94a3b8;">{{ item.projects.count }} Proj</span>
+                    </div>
+                    {% for p in item.projects %}
+                    <span class="proj-pill">{{ p.name }}</span>
+                    {% empty %}
+                    <div style="font-size: 12px; color: #64748b;">No active projects</div>
+                    {% endfor %}
+                </div>
+                {% empty %}
+                <div
+                    style="grid-column: 1/-1; text-align: center; padding: 40px; background: rgba(255,255,255,0.02); border-radius: 20px;">
+                    <p style="color: #94a3b8;">No departments configured yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="collab-hub">
+                <div class="panel chat-container">
+                    <div class="dept-name">
+                        Collaboration Channel
+                        <select id="projectSelect" class="compact-input">
+
+                            {% for p in projects %}
+                            <option value="{{ p.id }}">{{ p.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div id="chatArea" class="chat-messages">
+                        <!-- Messages loaded by JS -->
+                    </div>
+                    <div class="chat-input-area">
+                        <input id="chatInput" placeholder="Type a message to the team...">
+                        <button id="sendChatBtn" class="btn-primary">Send</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="dept-name">Quick Actions</div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <input id="emailTo" placeholder="Recipient email">
+                        <input id="emailSubject" placeholder="Quick subject">
+                        <textarea id="emailBody" placeholder="Message..."></textarea>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="sendEmailBtn" class="btn-primary"
+                                style="flex: 1; background: rgba(99, 102, 241, 0.2); border: 1px solid #6366f1;">Send
+                                Memo</button>
+                            <button id="saveDraftBtn" class="btn-primary"
+                                style="flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1);">Draft</button>
+                        </div>
+
+                        <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 8px 0;"></div>
+
+                        <input id="ticketTitle" placeholder="Ticket title">
+                        <button id="createTicketBtn" class="btn-primary"
+                            style="background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e;">Raise Ticket</button>
+                    </div>
+                    <div id="actionStatus" style="font-size: 11px; margin-top: 10px; text-align: center;"></div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Social Pulse</h2>
+            <div class="social-pulse">
+                <div class="panel">
+                    <p style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #fbbf24;">Upcoming Events
+                    </p>
+                    {% for b in birthdays %}
+                    <div class="social-item">{{ b.title }} - {{ b.meta_info }}</div>
+                    {% endfor %}
+                </div>
+                <div class="panel">
+                    <p style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #f472b6;">Hot Topics</p>
+                    {% for t in hot_topics %}
+                    <div class="social-item">{{ t.title }} ({{ t.meta_info }})</div>
+                    {% endfor %}
+                </div>
+                <div class="panel">
+                    <p style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #60a5fa;">Daily Dares</p>
+                    {% for d in dares %}
+                    <div class="social-item">{{ d.title }} - {{ d.content }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const projectSelect = document.getElementById('projectSelect');
+        const chatArea = document.getElementById('chatArea');
+        const chatInput = document.getElementById('chatInput');
+        const sendChatBtn = document.getElementById('sendChatBtn');
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function loadMessages() {
+            const pId = projectSelect.value;
+            if (!pId) return;
+            try {
+                const res = await fetch(`/api/chat/messages/?project=${encodeURIComponent(pId)}`);
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    chatArea.innerHTML = data.messages.map(m => `
+                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                            <div style="font-size: 11px; color: #818cf8; font-weight: 700;">${escapeHtml(m.user)}</div>
+                            <div style="font-size: 13px; margin: 4px 0;">${escapeHtml(m.text)}</div>
+                        </div>
+                    `).join('');
+                    chatArea.scrollTop = chatArea.scrollHeight;
+                }
+            } catch (e) { }
+        }
+
+        sendChatBtn.onclick = async () => {
+            const text = chatInput.value.trim();
+            const pId = projectSelect.value;
+            if (!text || !pId) return;
+            try {
+                const res = await fetch('/api/chat/messages/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ project: pId, text: text })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    chatInput.value = '';
+                    loadMessages();
+                } else {
+                    alert(data.message || 'Error sending message');
+                }
+            } catch (e) {
+                alert('Connection error. Please try again.');
+            }
+        };
+
+        projectSelect.onchange = loadMessages;
+        setInterval(loadMessages, 5000);
+        loadMessages();
+
+        // restored email logic
+        const emailTo = document.getElementById('emailTo');
+        const emailSubject = document.getElementById('emailSubject');
+        const emailBody = document.getElementById('emailBody');
+        const sendEmailBtn = document.getElementById('sendEmailBtn');
+        const saveDraftBtn = document.getElementById('saveDraftBtn');
+        const actionStatus = document.getElementById('actionStatus');
+
+        sendEmailBtn.onclick = async () => {
+            const to = emailTo.value.trim();
+            const subject = emailSubject.value.trim();
+            const body = emailBody.value.trim();
+            if (!to || !subject || !body) { actionStatus.textContent = 'Email fields required'; actionStatus.style.color = '#f87171'; return; }
+            actionStatus.textContent = 'Sending...';
+            try {
+                const res = await fetch('/dashboard/send-email/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to, subject, body })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    actionStatus.textContent = 'Email sent!';
+                    actionStatus.style.color = '#34d399';
+                    emailTo.value = ''; emailSubject.value = ''; emailBody.value = '';
+                } else {
+                    actionStatus.textContent = data.message || 'Failed to send';
+                    actionStatus.style.color = '#f87171';
+                }
+            } catch (e) {
+                actionStatus.textContent = 'Error sending email';
+                actionStatus.style.color = '#f87171';
+            }
+        };
+
+        saveDraftBtn.onclick = async () => {
+            const draft = { to: emailTo.value, subject: emailSubject.value, body: emailBody.value, action: 'save' };
+            try {
+                const res = await fetch('/email-page/save-draft/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(draft)
+                });
+                if ((await res.json()).status === 'ok') {
+                    actionStatus.textContent = 'Draft saved';
+                    actionStatus.style.color = '#34d399';
+                }
+            } catch (e) { }
+        };
+
+        const createTicketBtn = document.getElementById('createTicketBtn');
+        const ticketTitle = document.getElementById('ticketTitle');
+
+        createTicketBtn.onclick = async () => {
+            const title = ticketTitle.value.trim();
+            if (!title) return;
+            actionStatus.textContent = 'Creating ticket...';
+            try {
+                const res = await fetch('/dashboard/create-ticket/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, project_id: projectSelect.value, description: 'Created from dashboard speed dial' })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    actionStatus.textContent = 'Ticket raised!';
+                    actionStatus.style.color = '#34d399';
+                    ticketTitle.value = '';
+                }
+            } catch (e) { }
+        };
+
+        // Canvas Background logic
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = Array.from({ length: 50 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                size: Math.random() * 2
+            }));
+        }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.fillStyle = 'rgba(99,102,241,0.2)';
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        window.onresize = init;
+        init(); animate();
+    </script>
+</body>
+
+</html>

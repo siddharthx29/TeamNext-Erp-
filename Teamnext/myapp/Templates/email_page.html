@@ -1,0 +1,459 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Email - TeamNext</title>
+  <link rel="icon" type="image/svg+xml" href="/static/myapp/images/logo.svg">
+  <link rel="stylesheet" href="/static/myapp/css/responsive.css">
+  <link rel="stylesheet" href="/static/myapp/css/theme.css">
+  <script src="/static/myapp/js/theme.js"></script>
+  <style>
+    body {
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: #071127;
+      color: #e6eef8;
+      padding: 20px;
+      margin: 0
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    .container {
+      max-width: 1400px;
+      width: 96%;
+      margin: 0 auto
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05)
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+      color: #e6eef8;
+      font-family: inherit;
+      font-size: 14px
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #667eea
+    }
+
+    .row {
+      display: flex;
+      gap: 12px
+    }
+
+    button {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+      transition: transform 0.1s
+    }
+
+    button:active {
+      transform: scale(0.98)
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px
+    }
+
+    .grid-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px
+    }
+
+    @media (max-width: 768px) {
+      .grid-row {
+        flex-direction: column
+      }
+
+      .panel[style*="width:320px"] {
+        width: 100% !important
+      }
+    }
+
+    .mail {
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      margin-bottom: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      transition: background 0.2s
+    }
+
+    .mail:hover {
+      background: rgba(255, 255, 255, 0.06)
+    }
+
+    .scroll-area {
+      max-height: 450px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="meta">
+      <div style="display:flex;align-items:center;gap:12px">
+        <h2 style="margin:0">Email Client</h2>
+        <span style="opacity:0.3">|</span>
+        <span style="font-size:14px;color:#a0aec0;font-weight:500">{{ email }}</span>
+      </div>
+      <div class="user-menu" style="display:flex; align-items:center; gap:12px; cursor:pointer; position:relative"
+        onclick="toggleUserMenu(event)">
+        <div style="text-align:right">
+          <div style="font-weight:700; color:#e2e8f0; font-size:14px">{{ company_name }}</div>
+          <div style="font-size:12px; color:#94a3b8">{{ email }}</div>
+        </div>
+        <div class="avatar"
+          style="width:38px; height:38px; background:linear-gradient(135deg, #667eea, #764ba2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 4px 10px rgba(0,0,0,0.3)">
+          {{ email|slice:":1"|upper }}
+        </div>
+        <div id="userDropdown"
+          style="display:none; position:absolute; right:0; top:48px; background:#1e293b; border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; min-width:180px">
+          <div style="padding:4px 8px 10px 8px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:8px">
+            <div style="font-weight:600; font-size:13px">{{ email }}</div>
+            <div style="font-size:11px; color:#94a3b8">{{ company_name }}</div>
+          </div>
+          <a href="/profile-page/"
+            style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+            onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+            onmouseout="this.style.background='transparent'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Profile</a>
+          <a href="/settings-page/"
+            style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+            onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+            onmouseout="this.style.background='transparent'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            Settings</a>
+          <a href="/logout/"
+            style="display:flex; align-items:center; gap:8px; padding:8px; color:#f87171; text-decoration:none; font-size:14px; border-radius:8px; margin-top:4px"
+            onmouseover="this.style.background='rgba(248,113,113,0.1)'"
+            onmouseout="this.style.background='transparent'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" x2="9" y1="12" y2="12" />
+            </svg>
+            Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div style="margin-bottom:12px"><input id="to" placeholder="To: recipient@example.com"
+          value="{{ draft.to|default:'' }}"></div>
+      <div style="margin-bottom:12px"><input id="subject" placeholder="Subject" value="{{ draft.subject|default:'' }}">
+      </div>
+      <div style="margin-bottom:12px"><textarea id="body" rows="10"
+          placeholder="Write your email here...">{{ draft.body|default:'' }}</textarea></div>
+      <div style="display:flex;gap:10px">
+        <button id="sendBtn">Send Email</button>
+        <button id="saveBtn" style="background:rgba(255,255,255,0.1)">Save Draft</button>
+      </div>
+      <div id="status" style="margin-top:10px;min-height:20px;font-size:14px"></div>
+    </div>
+
+    <div class="grid-row">
+      <div class="panel" style="flex:2">
+        <h3 style="margin-top:0">Inbox <span style="font-weight:normal;opacity:0.6;font-size:0.8em">(Real +
+            Session)</span></h3>
+        <div class="scroll-area" id="inboxList">
+          {% if inbox and inbox|length > 0 %}
+          {% for m in inbox %}
+          <div class="mail">
+            <div style="cursor:pointer" onclick="openEmailObj(this)">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                <strong style="color:#fff" class="em-subj">{{ m.subject }}</strong>
+                <span style="font-size:12px;opacity:0.7" class="em-from">{{ m.from }}</span>
+              </div>
+              <div style="color:#bcd2ea;font-size:13px;line-height:1.4">{{ m.body|truncatechars:100 }}</div>
+              <div class="em-body" style="display:none">{{ m.body }}</div>
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div style="opacity:0.5;font-style:italic">No inbox messages.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="panel" style="flex:1;min-width:300px">
+        <h3 style="margin-top:0">Drafts</h3>
+        <div class="scroll-area" id="draftsList">
+          {% if drafts and drafts|length > 0 %}
+          {% for d in drafts %}
+          <div class="mail">
+            <strong>{{ d.subject }}</strong>
+            <div style="color:#bcd2ea;font-size:12px">To: {{ d.to }}</div>
+            <div style="margin-top:6px;font-size:12px;opacity:0.8">{{ d.body|truncatechars:80 }}</div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button class="loadDraftBtn" data-idx="{{ forloop.counter0 }}"
+                style="padding:4px 8px;font-size:12px">Load</button>
+              <button class="delDraftBtn" data-idx="{{ forloop.counter0 }}"
+                style="padding:4px 8px;font-size:12px;background:rgba(255,50,50,0.2)">Delete</button>
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div style="opacity:0.5;font-style:italic">No saved drafts.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:16px">
+      <h3 style="margin-top:0">Sent Items</h3>
+      <div class="scroll-area">
+        {% if sent and sent|length > 0 %}
+        {% for m in sent %}
+        <div class="mail">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <strong style="color:#fff">{{ m.subject }}</strong>
+            <span style="font-size:12px;opacity:0.7">To: {{ m.to }}</span>
+          </div>
+          <div style="color:#bcd2ea;font-size:13px">{{ m.body }}</div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div style="opacity:0.5;font-style:italic">No sent messages yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+
+  <div id="emailModal"
+    style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:999;justify-content:center;align-items:center">
+    <div class="panel"
+      style="width:800px;max-width:90%;max-height:80vh;display:flex;flex-direction:column;background:#0d1b38;border:1px solid rgba(255,255,255,0.1)">
+      <div
+        style="display:flex;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px">
+        <h3 id="modalSubject" style="margin:0;font-size:18px">Subject</h3>
+        <button onclick="closeModal()"
+          style="background:transparent;padding:0;color:#aaa;font-size:20px">&times;</button>
+      </div>
+      <div style="margin-bottom:16px;font-size:14px;color:#bcd2ea">
+        <strong>From:</strong> <span id="modalFrom">sender@example.com</span>
+      </div>
+      <div id="modalBody"
+        style="flex:1;overflow-y:auto;background:rgba(0,0,0,0.2);padding:16px;border-radius:8px;white-space:pre-wrap;font-family:monospace;font-size:13px;line-height:1.5">
+        Email body content...
+      </div>
+      <div style="margin-top:16px;text-align:right">
+        <button onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sendBtn = document.getElementById('sendBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const status = document.getElementById('status');
+    const inboxList = document.getElementById('inboxList');
+
+
+    document.addEventListener('DOMContentLoaded', async () => {
+
+      const loader = document.createElement('div');
+      loader.id = 'imapLoader';
+      loader.innerHTML = '<div style="padding:10px;text-align:center;font-style:italic;opacity:0.6">Fetching external emails...</div>';
+      if (inboxList.querySelector('div').innerText.includes('No inbox')) {
+        inboxList.innerHTML = '';
+      }
+      inboxList.prepend(loader);
+
+      try {
+        const res = await fetch('/api/email/fetch/');
+        const data = await res.json();
+        if (data.status === 'ok' && data.emails && data.emails.length > 0) {
+          renderAsyncEmails(data.emails);
+        } else {
+          loader.innerHTML = '<div style="padding:5px;font-size:12px;opacity:0.5;text-align:center">No external emails found.</div>';
+          setTimeout(() => loader.remove(), 2000);
+        }
+      } catch (e) {
+        loader.innerHTML = '<div style="padding:5px;font-size:12px;color:#ff8888;text-align:center">Failed to fetch external emails.</div>';
+      }
+    });
+
+    function renderAsyncEmails(list) {
+      const loader = document.getElementById('imapLoader');
+      if (loader) loader.remove();
+
+
+      list.forEach(m => {
+        const el = document.createElement('div');
+        el.className = 'mail';
+        el.style.borderLeft = '3px solid #667eea';
+        el.innerHTML = `
+          <div style="cursor:pointer" onclick="openEmailObj(this)">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                <strong style="color:#fff" class="em-subj">${escapeHtml(m.subject)}</strong>
+                <span style="font-size:12px;opacity:0.7" class="em-from">${escapeHtml(m.from)}</span>
+              </div>
+              <div style="color:#bcd2ea;font-size:13px;line-height:1.4">${escapeHtml(m.body).slice(0, 100)}...</div>
+              <div class="em-body" style="display:none">${escapeHtml(m.body)}</div>
+          </div>
+        `;
+        inboxList.prepend(el);
+      });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+
+    function openEmailObj(el) {
+      const subj = el.querySelector('.em-subj').innerText;
+      const from = el.querySelector('.em-from').innerText;
+      const body = el.querySelector('.em-body').innerText;
+
+      document.getElementById('modalSubject').innerText = subj;
+      document.getElementById('modalFrom').innerText = from;
+      document.getElementById('modalBody').innerText = body;
+
+      document.getElementById('emailModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('emailModal').style.display = 'none';
+    }
+
+
+
+
+
+    inboxList.addEventListener('click', function (e) {
+
+
+
+    });
+
+
+    sendBtn.addEventListener('click', async () => {
+      const to = document.getElementById('to').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const body = document.getElementById('body').value.trim();
+      if (!to || !subject || !body) { status.textContent = 'All fields required'; status.style.color = '#ffc2c2'; return; }
+      status.textContent = 'Sending...';
+      try {
+        const res = await fetch('/dashboard/send-email/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to, subject, body }) });
+        const data = await res.json();
+        if (data.status === 'success') { status.textContent = 'Email sent'; status.style.color = '#8ef29a'; setTimeout(() => location.reload(), 700); }
+        else { status.textContent = data.message || 'Failed'; status.style.color = '#ffc2c2'; }
+      } catch (e) { status.textContent = 'Error sending'; status.style.color = '#ffc2c2'; }
+    });
+
+    saveBtn.addEventListener('click', () => {
+      const draft = { to: document.getElementById('to').value, subject: document.getElementById('subject').value, body: document.getElementById('body').value, action: 'save' };
+      fetch('/email-page/save-draft/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(draft) }).then(r => r.json()).then(d => { if (d.status === 'ok') { status.textContent = 'Draft saved'; status.style.color = '#9fe7a4'; renderDrafts(d.drafts || []); } else { status.textContent = 'Failed'; status.style.color = '#ffc2c2' } })
+    });
+
+    function renderDrafts(list) {
+      const container = document.getElementById('draftsList'); if (!container) return;
+      if (!list || list.length === 0) { container.innerHTML = '<div style="opacity:0.5;font-style:italic">No saved drafts.</div>'; return; }
+      let html = ''; list.forEach((d, i) => {
+        html += `<div class="mail">
+                <strong>${escapeHtml(d.subject)}</strong>
+                <div style="color:#bcd2ea;font-size:12px">To: ${escapeHtml(d.to)}</div>
+                <div style="margin-top:6px;font-size:12px;opacity:0.8">${escapeHtml(d.body || '').slice(0, 80)}</div>
+                <div style="margin-top:8px;display:flex;gap:8px">
+                  <button class="loadDraftBtn" data-idx="${i}" style="padding:4px 8px;font-size:12px">Load</button>
+                  <button class="delDraftBtn" data-idx="${i}" style="padding:4px 8px;font-size:12px;background:rgba(255,50,50,0.2)">Delete</button>
+                </div>
+              </div>`
+      });
+      container.innerHTML = html;
+    }
+
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('loadDraftBtn')) {
+        const idx = e.target.getAttribute('data-idx');
+        fetch('/email-page/save-draft/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'load', index: idx }) }).then(r => r.json()).then(d => {
+          if (d.status === 'ok' && d.draft) {
+            document.getElementById('to').value = d.draft.to || '';
+            document.getElementById('subject').value = d.draft.subject || '';
+            document.getElementById('body').value = d.draft.body || '';
+            status.textContent = 'Draft loaded'; status.style.color = '#9fe7a4';
+          } else {
+            alert(d.message || 'Unable to load draft');
+          }
+        });
+      }
+      if (e.target.classList.contains('delDraftBtn')) {
+        const idx = e.target.getAttribute('data-idx');
+        fetch('/email-page/save-draft/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', index: idx }) }).then(r => r.json()).then(d => { if (d.status === 'ok') { renderDrafts(d.drafts || []); } else alert('Delete failed') });
+      }
+    });
+
+    function toggleUserMenu(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('userDropdown');
+      menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+    }
+    document.addEventListener('click', () => {
+      const menu = document.getElementById('userDropdown');
+      if (menu) menu.style.display = 'none';
+    });
+  </script>
+  <script src="/static/myapp/js/responsive.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,375 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Departments & Projects - TeamNext</title>
+	<link rel="stylesheet" href="/static/myapp/css/responsive.css">
+	<link rel="stylesheet" href="/static/myapp/css/theme.css">
+	<script src="/static/myapp/js/theme.js"></script>
+	<style>
+		body {
+			font-family: 'Inter', system-ui, -apple-system, sans-serif;
+			background: #020617;
+			color: #e2e8f0;
+			padding: 20px;
+			min-height: 100vh;
+		}
+
+		.panel {
+			background: rgba(15, 23, 42, 0.6);
+			backdrop-filter: blur(12px);
+			padding: 32px;
+			border-radius: 20px;
+			max-width: 1000px;
+			margin: 0 auto;
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+		}
+
+		.header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 40px;
+		}
+
+		.header h2 {
+			font-size: 28px;
+			font-weight: 800;
+			background: linear-gradient(90deg, #38bdf8, #818cf8);
+			-webkit-background-clip: text;
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.section-title {
+			font-size: 14px;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: #94a3b8;
+			margin-top: 40px;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.section-title::after {
+			content: '';
+			flex: 1;
+			height: 1px;
+			background: rgba(255, 255, 255, 0.05);
+		}
+
+		.dept-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+			gap: 20px;
+		}
+
+		.dept-card {
+			background: rgba(255, 255, 255, 0.02);
+			border: 1px solid rgba(255, 255, 255, 0.05);
+			border-radius: 16px;
+			padding: 24px;
+			transition: all 0.3s ease;
+		}
+
+		.dept-card:hover {
+			background: rgba(255, 255, 255, 0.04);
+			border-color: rgba(99, 102, 241, 0.3);
+			transform: translateY(-4px);
+		}
+
+		.dept-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			margin-bottom: 16px;
+		}
+
+		.dept-name {
+			font-size: 18px;
+			font-weight: 700;
+			color: #f8fafc;
+		}
+
+		.proj-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.proj-item {
+			background: rgba(255, 255, 255, 0.03);
+			border-radius: 10px;
+			padding: 12px 16px;
+			margin-bottom: 10px;
+			border: 1px solid rgba(255, 255, 255, 0.02);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.proj-name {
+			font-size: 14px;
+			font-weight: 500;
+			color: #cbd5e1;
+		}
+
+		.badge {
+			font-size: 10px;
+			padding: 2px 6px;
+			border-radius: 4px;
+			background: rgba(99, 102, 241, 0.1);
+			color: #818cf8;
+			font-weight: 600;
+		}
+
+		.unassigned-section {
+			margin-top: 40px;
+			background: rgba(255, 255, 255, 0.01);
+			border-radius: 16px;
+			padding: 20px;
+			border: 1px dashed rgba(255, 255, 255, 0.1);
+		}
+
+		.form-box {
+			background: rgba(255, 255, 255, 0.02);
+			border: 1px solid rgba(255, 255, 255, 0.05);
+			padding: 24px;
+			border-radius: 16px;
+			margin-bottom: 24px;
+		}
+
+		input,
+		select,
+		textarea {
+			width: 100%;
+			padding: 12px;
+			border-radius: 10px;
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			background: rgba(0, 0, 0, 0.2);
+			color: #fff;
+			margin-bottom: 12px;
+			outline: none;
+		}
+
+		input:focus {
+			border-color: #6366f1;
+		}
+
+		.btn {
+			padding: 12px 24px;
+			border-radius: 10px;
+			border: none;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+			color: white;
+		}
+
+		.btn-primary:hover {
+			opacity: 0.9;
+			transform: scale(1.02);
+		}
+
+		.multi-select {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin-bottom: 12px;
+		}
+
+		.multi-item {
+			padding: 6px 12px;
+			border-radius: 8px;
+			background: rgba(255, 255, 255, 0.05);
+			font-size: 13px;
+			cursor: pointer;
+			border: 1px solid transparent;
+		}
+
+		.multi-item.selected {
+			background: rgba(99, 102, 241, 0.2);
+			border-color: #6366f1;
+			color: #fff;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="panel">
+		<div class="header">
+			<h2>Departments & Projects</h2>
+			<div class="user-menu" style="display:flex; align-items:center; gap:12px; cursor:pointer; position:relative"
+				onclick="toggleUserMenu(event)">
+				<div style="text-align:right">
+					<div style="font-weight:700; color:#e2e8f0; font-size:14px">{{ company_name }}</div>
+					<div style="font-size:12px; color:#94a3b8">{{ email }}</div>
+				</div>
+				<div class="avatar"
+					style="width:38px; height:38px; background:linear-gradient(135deg, #667eea, #764ba2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 4px 10px rgba(0,0,0,0.3)">
+					{{ email|slice:":1"|upper }}
+				</div>
+				<div id="userDropdown"
+					style="display:none; position:absolute; right:0; top:48px; background:#1e293b; border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; min-width:180px">
+					<a href="/dashboard/"
+						style="display:block; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px">Dashboard</a>
+					<a href="/logout/"
+						style="display:block; padding:8px; color:#f87171; text-decoration:none; font-size:14px">Logout</a>
+				</div>
+			</div>
+		</div>
+
+		{% if is_admin %}
+		<div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px">
+			<div class="form-box">
+				<h4 style="margin-bottom:16px">Create Department</h4>
+				<input id="newDeptName" placeholder="Department Name">
+				<textarea id="newDeptDesc" placeholder="Description" rows="2"></textarea>
+				<button class="btn btn-primary" onclick="createDepartment()">Add Department</button>
+			</div>
+			<div class="form-box">
+				<h4 style="margin-bottom:16px">New Project</h4>
+				<input id="newProjName" placeholder="Project Name">
+				<textarea id="newProjDesc" placeholder="Description" rows="2"></textarea>
+				<div style="font-size:12px; color:#94a3b8; margin-bottom:8px">Assign to Departments (Collaborative):
+				</div>
+				<div id="deptPicker" class="multi-select"></div>
+				<button class="btn btn-primary" onclick="createProject()">Launch Project</button>
+			</div>
+		</div>
+		{% endif %}
+
+		<div class="section-title">Organizational Structure</div>
+		<div id="contentGrid" class="dept-grid">
+			<!-- Populated by JS -->
+		</div>
+
+		<div id="unassignedProjects" class="unassigned-section" style="display:none">
+			<div style="font-size:14px; color:#94a3b8; margin-bottom:12px">Standalone Projects</div>
+			<ul id="unassignedList" class="proj-list"
+				style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px"></ul>
+		</div>
+	</div>
+
+	<script>
+		let departments = [];
+		let projects = [];
+
+		async function loadData() {
+			try {
+				const [dRes, pRes] = await Promise.all([
+					fetch('/api/departments/'),
+					fetch('/api/projects/')
+				]);
+				const [dData, pData] = await Promise.all([dRes.json(), pRes.json()]);
+
+				if (dData.status === 'ok') departments = dData.departments;
+				if (pData.status === 'ok') projects = pData.projects;
+
+				renderInterface();
+			} catch (e) {
+				console.error(e);
+			}
+		}
+
+		function renderInterface() {
+			const grid = document.getElementById('contentGrid');
+			grid.innerHTML = '';
+
+			const picker = document.getElementById('deptPicker');
+			if (picker) {
+				picker.innerHTML = departments.map(d => `<div class="multi-item" data-id="${d.id}" onclick="this.classList.toggle('selected')">${d.name}</div>`).join('');
+			}
+
+			departments.forEach(dept => {
+				const deptProjects = projects.filter(p => p.departments.some(pd => pd.id === dept.id));
+				const card = document.createElement('div');
+				card.className = 'dept-card';
+				card.innerHTML = `
+                    <div class="dept-header">
+                        <div class="dept-name">${dept.name}</div>
+                        <div class="badge">${deptProjects.length} Projects</div>
+                    </div>
+                    <div style="font-size:13px; color:#94a3b8; margin-bottom:20px">${dept.desc || 'No description'}</div>
+                    <ul class="proj-list">
+                        ${deptProjects.map(p => `
+                            <li class="proj-item">
+                                <span class="proj-name">${p.name}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#6366f1"><path d="m12 5 7 7-7 7"/><path d="M5 12h14"/></svg>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+				grid.appendChild(card);
+			});
+
+			// Unassigned
+			const unassigned = projects.filter(p => !p.departments || p.departments.length === 0);
+			const unSection = document.getElementById('unassignedProjects');
+			const unList = document.getElementById('unassignedList');
+			if (unassigned.length > 0) {
+				unSection.style.display = 'block';
+				unList.innerHTML = unassigned.map(p => `
+                    <li class="proj-item">
+                        <span class="proj-name">${p.name}</span>
+                        <div class="badge" style="background:rgba(244,63,94,0.1); color:#fb7185">Direct</div>
+                    </li>
+                `).join('');
+			} else {
+				unSection.style.display = 'none';
+			}
+		}
+
+		async function createDepartment() {
+			const name = document.getElementById('newDeptName').value.trim();
+			const desc = document.getElementById('newDeptDesc').value.trim();
+			if (!name) return alert('Name required');
+
+			const res = await fetch('/api/departments/', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name, desc })
+			});
+			if ((await res.json()).status === 'ok') {
+				document.getElementById('newDeptName').value = '';
+				document.getElementById('newDeptDesc').value = '';
+				loadData();
+			}
+		}
+
+		async function createProject() {
+			const name = document.getElementById('newProjName').value.trim();
+			const desc = document.getElementById('newProjDesc').value.trim();
+			const deptIds = Array.from(document.querySelectorAll('#deptPicker .multi-item.selected')).map(el => el.dataset.id);
+
+			if (!name) return alert('Name required');
+
+			const res = await fetch('/api/projects/add/', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name, desc, departments: deptIds })
+			});
+			if ((await res.json()).status === 'ok') {
+				document.getElementById('newProjName').value = '';
+				document.getElementById('newProjDesc').value = '';
+				loadData();
+			}
+		}
+
+		function toggleUserMenu(e) { e.stopPropagation(); const m = document.getElementById('userDropdown'); m.style.display = m.style.display === 'none' ? 'block' : 'none'; }
+		document.addEventListener('click', () => { if (document.getElementById('userDropdown')) document.getElementById('userDropdown').style.display = 'none'; });
+
+		loadData();
+	</script>
+</body>
+
+</html>

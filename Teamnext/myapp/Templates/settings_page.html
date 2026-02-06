@@ -1,0 +1,263 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Settings - TeamNext</title>
+	<style>
+		body {
+			font-family: Inter, Arial;
+			background: #071127;
+			color: #e6eef8;
+			padding: 20px
+		}
+
+		.panel {
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+			padding: 16px;
+			border-radius: 10px;
+			max-width: 900px;
+			margin: 0 auto
+		}
+	</style>
+</head>
+
+<body>
+	<div class="panel">
+		<div
+			style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.05)">
+			<h2>Settings — {{ company_name }}</h2>
+			<div class="user-menu" style="display:flex; align-items:center; gap:12px; cursor:pointer; position:relative"
+				onclick="toggleUserMenu(event)">
+				<div style="text-align:right">
+					<div style="font-weight:700; color:#e2e8f0; font-size:14px">{{ company_name }}</div>
+					<div style="font-size:12px; color:#94a3b8">{{ email }}</div>
+				</div>
+				<div class="avatar"
+					style="width:38px; height:38px; background:linear-gradient(135deg, #667eea, #764ba2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 4px 10px rgba(0,0,0,0.3)">
+					{{ email|slice:":1"|upper }}
+				</div>
+				<div id="userDropdown"
+					style="display:none; position:absolute; right:0; top:48px; background:#1e293b; border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; min-width:180px">
+					<div
+						style="padding:4px 8px 10px 8px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:8px">
+						<div style="font-weight:600; font-size:13px">{{ email }}</div>
+						<div style="font-size:11px; color:#94a3b8">{{ company_name }}</div>
+					</div>
+					<a href="/dashboard/"
+						style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+						onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<rect width="7" height="9" x="3" y="3" rx="1" />
+							<rect width="7" height="5" x="14" y="3" rx="1" />
+							<rect width="7" height="9" x="14" y="12" rx="1" />
+							<rect width="7" height="5" x="3" y="15" rx="1" />
+						</svg>
+						Dashboard</a>
+					<a href="/profile-page/"
+						style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+						onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+							<circle cx="12" cy="7" r="4" />
+						</svg>
+						Profile</a>
+					<a href="/logout/"
+						style="display:flex; align-items:center; gap:8px; padding:8px; color:#f87171; text-decoration:none; font-size:14px; border-radius:8px; margin-top:4px"
+						onmouseover="this.style.background='rgba(248,113,113,0.1)'"
+						onmouseout="this.style.background='transparent'">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+							<polyline points="16 17 21 12 16 7" />
+							<line x1="21" x2="9" y1="12" y2="12" />
+						</svg>
+						Logout</a>
+				</div>
+			</div>
+		</div>
+
+		<div style="margin-top:12px;display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+			<div>
+				<h3 style="margin-bottom:12px">Company Profile</h3>
+				<div style="display:flex;flex-direction:column;gap:12px">
+					<div style="display:flex;flex-direction:column;gap:4px">
+						<label style="font-size:12px;color:#94a3b8">Company Name</label>
+						<input id="companyName" value="{{ company_name }}" placeholder="Company name"
+							style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#e6eef8">
+					</div>
+					<div style="display:flex;flex-direction:column;gap:4px">
+						<label style="font-size:12px;color:#94a3b8">Phone Number</label>
+						<input id="companyPhone" value="{{ co_info.phone|default:'' }}" placeholder="Phone"
+							style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#e6eef8">
+					</div>
+					<div style="display:flex;flex-direction:column;gap:4px">
+						<label style="font-size:12px;color:#94a3b8">Website</label>
+						<input id="companyWebsite" value="{{ co_info.website|default:'' }}" placeholder="Website"
+							style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#e6eef8">
+					</div>
+					<div style="display:flex;flex-direction:column;gap:4px">
+						<label style="font-size:12px;color:#94a3b8">About Company</label>
+						<textarea id="companyDesc" placeholder="Short description"
+							style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#e6eef8;min-height:100px">{{ co_info.industry|default:'' }}</textarea>
+					</div>
+					<div style="margin-top:10px">
+						<button id="saveSettingsBtn"
+							style="padding:10px 24px;background:linear-gradient(90deg,#667eea,#764ba2);border:none;border-radius:8px;color:white;font-weight:600;cursor:pointer">Save
+							Changes</button>
+						<span id="settingsStatus" style="margin-left:12px;font-size:14px"></span>
+					</div>
+				</div>
+			</div>
+
+			<div
+				style="background:rgba(255,255,255,0.03);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)">
+				<h4 style="margin-bottom:12px;color:#cbd5e1">Public Information</h4>
+				<div style="font-weight:700;font-size:18px;color:#fff" id="previewName">{{ company_name }}</div>
+				<div id="previewPhone"
+					style="color:#94a3b8;margin-top:10px;font-size:14px; display: flex; align-items: center; gap: 6px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+						stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path
+							d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+					</svg>
+					<span id="previewPhoneValue">{{ co_info.phone|default:'-' }}</span>
+				</div>
+				<div id="previewWebsite"
+					style="color:#94a3b8;margin-top:8px;font-size:14px; display: flex; align-items: center; gap: 6px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+						stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="12" cy="12" r="10" />
+						<line x1="2" y1="12" x2="22" y2="12" />
+						<path
+							d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+					</svg>
+					<span id="previewWebsiteValue">{{ co_info.website|default:'-' }}</span>
+				</div>
+				<hr style="margin:16px 0;border:0;border-top:1px solid rgba(255,255,255,0.05)">
+				<div id="previewDesc" style="color:#94a3b8;font-size:13px;line-height:1.6">{{
+					co_info.industry|default:'No description yet.' }}</div>
+			</div>
+
+			<!-- Appearance Settings -->
+			<div
+				style="background:rgba(255,255,255,0.03);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);margin-top:20px">
+				<h4 style="margin-bottom:16px;color:#cbd5e1">Appearance</h4>
+				<div style="display:flex; flex-direction:column; gap:12px">
+					<div style="display:flex; align-items:center; justify-content:space-between; padding:8px; border-radius:8px; background:rgba(255,255,255,0.02); cursor:pointer"
+						onclick="setTheme('dark')">
+						<div style="display:flex; align-items:center; gap:10px">
+							<div
+								style="width:24px; height:24px; background:#020617; border-radius:6px; border:1px solid rgba(255,255,255,0.1)">
+							</div>
+							<span style="font-size:14px">Dark Mode (Default)</span>
+						</div>
+						<div class="theme-check dark-check" style="color:#4ade80">✓</div>
+					</div>
+					<div style="display:flex; align-items:center; justify-content:space-between; padding:8px; border-radius:8px; background:rgba(255,255,255,0.02); cursor:pointer"
+						onclick="setTheme('light')">
+						<div style="display:flex; align-items:center; gap:10px">
+							<div
+								style="width:24px; height:24px; background:#f1f5f9; border-radius:6px; border:1px solid rgba(0,0,0,0.1)">
+							</div>
+							<span style="font-size:14px">Light Mode</span>
+						</div>
+						<div class="theme-check light-check" style="color:#4ade80; display:none">✓</div>
+					</div>
+					<div style="display:flex; align-items:center; justify-content:space-between; padding:8px; border-radius:8px; background:rgba(255,255,255,0.02); cursor:pointer"
+						onclick="setTheme('grayscale')">
+						<div style="display:flex; align-items:center; gap:10px">
+							<div
+								style="width:24px; height:24px; background:#64748b; border-radius:6px; border:1px solid rgba(255,255,255,0.1)">
+							</div>
+							<span style="font-size:14px">Grayscale</span>
+						</div>
+						<div class="theme-check grayscale-check" style="color:#4ade80; display:none">✓</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/static/myapp/js/theme.js"></script>
+	<link rel="stylesheet" href="/static/myapp/css/theme.css">
+
+	<script>
+		// Override setTheme to update checkmarks
+		const originalSetTheme = window.setTheme;
+		window.setTheme = function (t) {
+			originalSetTheme(t);
+			updateCheckmarks(t);
+		};
+
+		function updateCheckmarks(t) {
+			document.querySelectorAll('.theme-check').forEach(el => el.style.display = 'none');
+			const check = document.querySelector('.' + t + '-check');
+			if (check) check.style.display = 'block';
+		}
+
+		// Initial check
+		updateCheckmarks(localStorage.getItem('theme') || 'dark');
+		function updatePreview() {
+			document.getElementById('previewName').textContent = document.getElementById('companyName').value || 'Company Name';
+			document.getElementById('previewPhoneValue').textContent = document.getElementById('companyPhone').value || '-';
+			document.getElementById('previewWebsiteValue').textContent = document.getElementById('companyWebsite').value || '-';
+			document.getElementById('previewDesc').textContent = document.getElementById('companyDesc').value || 'No description yet.';
+		}
+
+		['companyName', 'companyPhone', 'companyWebsite', 'companyDesc'].forEach(id => {
+			const el = document.getElementById(id);
+			if (el) el.addEventListener('input', updatePreview);
+		});
+
+		document.getElementById('saveSettingsBtn').addEventListener('click', async function () {
+			const name = document.getElementById('companyName').value.trim();
+			const phone = document.getElementById('companyPhone').value.trim();
+			const website = document.getElementById('companyWebsite').value.trim();
+			const st = document.getElementById('settingsStatus');
+
+			if (!name) { st.textContent = 'Enter a company name'; st.style.color = '#f87171'; return; }
+			st.textContent = 'Saving...';
+			st.style.color = '#cbd5e1';
+
+			try {
+				const res = await fetch('/api/save-settings/', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ company_name: name })
+				});
+				const data = await res.json();
+				if (data.status === 'ok') {
+					st.textContent = 'Saved successfully!';
+					st.style.color = '#4ade80';
+					setTimeout(() => location.reload(), 1000);
+				} else {
+					st.textContent = data.message || 'Failed';
+					st.style.color = '#f87171';
+				}
+			} catch (e) {
+				st.textContent = 'Error saving settings';
+				st.style.color = '#f87171';
+				console.error(e);
+			}
+		});
+
+
+		function toggleUserMenu(e) {
+			e.stopPropagation();
+			const menu = document.getElementById('userDropdown');
+			menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+		}
+		document.addEventListener('click', () => {
+			const menu = document.getElementById('userDropdown');
+			if (menu) menu.style.display = 'none';
+		});
+	</script>
+</body>
+
+</html>

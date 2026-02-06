@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamNext Enterprise Management Tool - Verify OTP</title>
+    <link rel="stylesheet" href="/static/myapp/css/theme.css">
+    <script src="/static/myapp/js/theme.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            overflow: hidden;
+            color: #ffffff;
+            position: relative;
+            perspective: 1000px;
+        }
+
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%),
+                linear-gradient(-45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%);
+            animation: geometricShift 20s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes geometricShift {
+
+            0%,
+            100% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateX(10px) translateY(-10px) rotate(1deg);
+            }
+
+            50% {
+                transform: translateX(-5px) translateY(5px) rotate(-0.5deg);
+            }
+
+            75% {
+                transform: translateX(-10px) translateY(-5px) rotate(0.5deg);
+            }
+        }
+
+
+        .floating-cube {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(255, 119, 198, 0.1), rgba(120, 219, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            animation: floatCube 8s ease-in-out infinite;
+        }
+
+        .floating-cube:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-cube:nth-child(2) {
+            top: 20%;
+            right: 15%;
+            animation-delay: 2s;
+            width: 40px;
+            height: 40px;
+        }
+
+        .floating-cube:nth-child(3) {
+            bottom: 15%;
+            left: 20%;
+            animation-delay: 4s;
+            width: 50px;
+            height: 50px;
+        }
+
+        .floating-cube:nth-child(4) {
+            bottom: 25%;
+            right: 10%;
+            animation-delay: 6s;
+            width: 35px;
+            height: 35px;
+        }
+
+        @keyframes floatCube {
+
+            0%,
+            100% {
+                transform: translateY(0) rotateX(0deg) rotateY(0deg);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: translateY(-20px) rotateX(180deg) rotateY(180deg);
+                opacity: 0.6;
+            }
+        }
+
+        .card {
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%),
+                linear-gradient(45deg, rgba(120, 119, 198, 0.1) 0%, rgba(255, 119, 198, 0.1) 50%, rgba(120, 219, 255, 0.1) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 50px;
+            width: 420px;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            animation: cardEntrance 1.2s ease-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotateX(20deg) scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg) scale(1);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff77c9, #78c1ff, #9678ff);
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 0.3;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) rotateX(-2deg);
+            box-shadow:
+                0 35px 70px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff77c9, #78c1ff);
+            border-radius: 2px;
+        }
+
+        .email-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .email-info p {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        .email-info strong {
+            color: #78c1ff;
+            font-weight: 500;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 119, 198, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 119, 198, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        #timer {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ff77c9;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px rgba(255, 119, 201, 0.5);
+            animation: timerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes timerPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            border: none;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%),
+                linear-gradient(45deg, rgba(120, 119, 198, 0.1) 0%, rgba(255, 119, 198, 0.1) 100%);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 2px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        input:focus {
+            outline: none;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%),
+                linear-gradient(45deg, rgba(120, 119, 198, 0.2) 0%, rgba(255, 119, 198, 0.2) 100%);
+            border-color: rgba(120, 219, 255, 0.5);
+            box-shadow:
+                0 0 20px rgba(120, 219, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            letter-spacing: 3px;
+        }
+
+        input:focus::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .verify-btn {
+            background:
+                linear-gradient(135deg, #4ade80 0%, #22c55e 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            box-shadow:
+                0 8px 25px rgba(74, 222, 128, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 12px 35px rgba(74, 222, 128, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .resend-btn {
+            background:
+                linear-gradient(135deg, #f59e0b 0%, #d97706 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            box-shadow:
+                0 8px 25px rgba(245, 158, 11, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            opacity: 0.6;
+        }
+
+        .resend-btn:not(:disabled):hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 12px 35px rgba(245, 158, 11, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            opacity: 1;
+        }
+
+        .resend-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .error {
+            text-align: center;
+            color: #ff6b6b;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            backdrop-filter: blur(10px);
+            animation: errorShake 0.5s ease-in-out;
+        }
+
+        @keyframes errorShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .success {
+            text-align: center;
+            color: #4ade80;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            backdrop-filter: blur(10px);
+            animation: successPulse 0.6s ease-in-out;
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .back-link:hover {
+            color: #78c1ff;
+        }
+
+        .back-link::before {
+            content: '←';
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-link:hover::before {
+            transform: translateX(-3px);
+        }
+
+
+        @media (max-width: 768px) {
+            .card {
+                width: 90%;
+                padding: 40px 30px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .floating-cube {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                width: 95%;
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            input {
+                padding: 16px 18px;
+                font-size: 16px;
+                letter-spacing: 1px;
+            }
+
+            input:focus {
+                letter-spacing: 2px;
+            }
+
+            button {
+                padding: 14px 18px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="floating-cube"></div>
+    <div class="floating-cube"></div>
+    <div class="floating-cube"></div>
+    <div class="floating-cube"></div>
+
+    <div class="card">
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="160" height="48"
+                style="display: block; margin: 0 auto;">
+                <defs>
+                    <linearGradient id="logoGradientOTP" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ff77c9;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#78c1ff;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="iconGradientOTP" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ff77c9;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#78c1ff;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <g>
+                    <circle cx="25" cy="30" r="8" fill="url(#iconGradientOTP)" opacity="0.9" />
+                    <circle cx="10" cy="15" r="6" fill="url(#iconGradientOTP)" opacity="0.8" />
+                    <circle cx="40" cy="15" r="6" fill="url(#iconGradientOTP)" opacity="0.8" />
+                    <circle cx="10" cy="45" r="6" fill="url(#iconGradientOTP)" opacity="0.8" />
+                    <circle cx="40" cy="45" r="6" fill="url(#iconGradientOTP)" opacity="0.8" />
+                    <line x1="25" y1="30" x2="10" y2="15" stroke="url(#iconGradientOTP)" stroke-width="2"
+                        opacity="0.6" />
+                    <line x1="25" y1="30" x2="40" y2="15" stroke="url(#iconGradientOTP)" stroke-width="2"
+                        opacity="0.6" />
+                    <line x1="25" y1="30" x2="10" y2="45" stroke="url(#iconGradientOTP)" stroke-width="2"
+                        opacity="0.6" />
+                    <line x1="25" y1="30" x2="40" y2="45" stroke="url(#iconGradientOTP)" stroke-width="2"
+                        opacity="0.6" />
+                    <path d="M 45 30 L 50 25 L 50 30 L 50 35 Z" fill="url(#iconGradientOTP)" opacity="0.9" />
+                </g>
+                <text x="60" y="25" font-family="'Inter', sans-serif" font-size="20" font-weight="bold"
+                    fill="url(#logoGradientOTP)">TeamNext</text>
+                <text x="60" y="45" font-family="'Inter', sans-serif" font-size="8" font-weight="600" fill="#78c1ff"
+                    opacity="0.8">Enterprise Management Tool</text>
+            </svg>
+        </div>
+
+        <h2>Verify OTP</h2>
+
+        <div class="email-info">
+            <p>OTP sent to: <strong>{{ email }}</strong></p>
+        </div>
+
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="timer-container">
+            <p style="margin: 0 0 8px 0; font-size: 14px; color: rgba(255,255,255,0.7);">Time remaining:</p>
+            <div id="timer">02:00</div>
+        </div>
+
+        <form id="verify-form" method="POST" action="{% url 'verify_otp' %}">
+            {% csrf_token %}
+            <input type="text" name="otp" maxlength="6" required placeholder="000000" pattern="[0-9]{6}"
+                title="Enter 6-digit OTP">
+        </form>
+
+        <div class="button-group">
+            <button type="submit" form="verify-form" class="verify-btn">Verify OTP</button>
+            <form method="POST" action="{% url 'resend_otp' %}" style="flex: 1;">
+                {% csrf_token %}
+                <button type="submit" id="resendBtn" class="resend-btn" disabled>Resend OTP</button>
+            </form>
+        </div>
+
+        <a href="{% url 'login' %}" class="back-link">Back to Login</a>
+    </div>
+
+    <script>
+        let expiryTime = {{ expiry_timestamp }} * 1000;
+        let timer = document.getElementById("timer");
+        let resendBtn = document.getElementById("resendBtn");
+        let verifyForm = document.querySelector('form[action*="verify"]');
+
+        const interval = setInterval(() => {
+            let timeLeft = Math.floor((expiryTime - Date.now()) / 1000);
+
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                timer.innerText = "EXPIRED";
+                timer.style.color = "#ff6b6b";
+                timer.style.animation = "none";
+                resendBtn.disabled = false;
+                resendBtn.style.opacity = "1";
+                return;
+            }
+
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+
+            timer.innerText = m.toString().padStart(2, '0') + ":" + s.toString().padStart(2, '0');
+        }, 1000);
+
+
+        document.querySelector('input[name="otp"]').addEventListener('input', function (e) {
+            if (this.value.length === 6) {
+
+                this.style.borderColor = 'rgba(74, 222, 128, 0.5)';
+                this.style.boxShadow = '0 0 20px rgba(74, 222, 128, 0.2)';
+
+
+                setTimeout(() => {
+                    verifyForm.submit();
+                }, 500);
+            } else {
+                this.style.borderColor = 'rgba(255,255,255,0.1)';
+                this.style.boxShadow = 'none';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

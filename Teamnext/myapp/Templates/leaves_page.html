@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Management - TeamNext</title>
+    <link rel="icon" type="image/svg+xml" href="/static/myapp/images/logo.svg">
+    <link rel="stylesheet" href="/static/myapp/css/theme.css">
+    <script src="/static/myapp/js/theme.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #111827 60%, #0b1220 100%);
+            color: #e6eef8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #34d399, #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            color: #a0aec0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
+
+        .panel {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        button.primary {
+            background: linear-gradient(90deg, #34d399, #059669);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        button.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+        }
+
+
+        .leave-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #64748b;
+        }
+
+        .leave-item.Pending {
+            border-left-color: #fbbf24;
+        }
+
+        .leave-item.Approved {
+            border-left-color: #34d399;
+        }
+
+        .leave-item.Rejected {
+            border-left-color: #f87171;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-badge.Pending {
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.1);
+        }
+
+        .status-badge.Approved {
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.1);
+        }
+
+        .status-badge.Rejected {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+
+        .btn-approve {
+            background: rgba(52, 211, 153, 0.2);
+            color: #34d399;
+        }
+
+        .btn-approve:hover {
+            background: rgba(52, 211, 153, 0.4);
+        }
+
+        .btn-reject {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+        }
+
+        .btn-reject:hover {
+            background: rgba(248, 113, 113, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Leave Management</h1>
+            <div class="user-menu" style="display:flex; align-items:center; gap:12px; cursor:pointer; position:relative"
+                onclick="toggleUserMenu(event)">
+                <div style="text-align:right">
+                    <div style="font-weight:700; color:#e2e8f0; font-size:14px">{{ company_name }}</div>
+                    <div style="font-size:12px; color:#94a3b8">{{ email }}</div>
+                </div>
+                <div class="avatar"
+                    style="width:38px; height:38px; background:linear-gradient(135deg, #667eea, #764ba2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 4px 10px rgba(0,0,0,0.3)">
+                    {{ email|slice:":1"|upper }}
+                </div>
+                <div id="userDropdown"
+                    style="display:none; position:absolute; right:0; top:48px; background:#1e293b; border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; min-width:180px">
+                    <div
+                        style="padding:4px 8px 10px 8px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:8px">
+                        <div style="font-weight:600; font-size:13px">{{ email }}</div>
+                        <div style="font-size:11px; color:#94a3b8">{{ company_name }}</div>
+                    </div>
+                    <a href="/dashboard/"
+                        style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+                        onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                        onmouseout="this.style.background='transparent'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="7" height="9" x="3" y="3" rx="1" />
+                            <rect width="7" height="5" x="14" y="3" rx="1" />
+                            <rect width="7" height="9" x="14" y="12" rx="1" />
+                            <rect width="7" height="5" x="3" y="15" rx="1" />
+                        </svg>
+                        Dashboard</a>
+                    <a href="/profile-page/"
+                        style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+                        onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                        onmouseout="this.style.background='transparent'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Profile</a>
+                    <a href="/settings-page/"
+                        style="display:flex; align-items:center; gap:8px; padding:8px; color:#e2e8f0; text-decoration:none; font-size:14px; border-radius:8px"
+                        onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                        onmouseout="this.style.background='transparent'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        Settings</a>
+                    <a href="/logout/"
+                        style="display:flex; align-items:center; gap:8px; padding:8px; color:#f87171; text-decoration:none; font-size:14px; border-radius:8px; margin-top:4px"
+                        onmouseover="this.style.background='rgba(248,113,113,0.1)'"
+                        onmouseout="this.style.background='transparent'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" x2="9" y1="12" y2="12" />
+                        </svg>
+                        Logout</a>
+                </div>
+            </div>
+        </div>
+
+        {% if not is_admin %}
+        <div class="panel">
+            <h3 style="margin-bottom:16px; color:#e2e8f0">Apply for Leave</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Leave Type</label>
+                    <select id="l-type">
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Casual Leave">Casual / Vacation</option>
+                        <option value="Emergency">Emergency</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="l-start">
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" id="l-end">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Reason</label>
+                <textarea id="l-reason" rows="2" placeholder="Brief reason for your leave request..."></textarea>
+            </div>
+            <div style="margin-top:16px">
+                <button class="primary" onclick="applyLeave()">Submit Request</button>
+            </div>
+        </div>
+        {% endif %}
+
+        <h3 style="margin-bottom:12px; color:#94a3b8">
+            {% if is_admin %}All Leave Requests{% else %}My Leave History{% endif %}
+        </h3>
+
+        <div id="leaves-list">
+            {% if leaves %}
+            {% for l in leaves %}
+            <div class="leave-item {{ l.status }}">
+                <div>
+                    <div style="font-weight:600; font-size:16px; margin-bottom:4px">
+                        {{ l.leave_type }}
+                        <span style="font-weight:400; font-size:14px; color:#cbd5e1; margin-left:8px">by {{
+                            l.employee_name }}</span>
+                    </div>
+                    <div style="font-size:13px; color:#94a3b8; margin-bottom:4px">{{ l.start_date }} to {{ l.end_date }}
+                    </div>
+                    <div style="font-size:13px; color:#cbd5e1">"{{ l.reason }}"</div>
+                </div>
+                <div style="display:flex; align-items:center">
+                    <span class="status-badge {{ l.status }}">{{ l.status }}</span>
+
+                    {% if is_admin and l.status == 'Pending' %}
+                    <div style="margin-left:16px">
+                        <button class="btn-action btn-approve"
+                            onclick="actionLeave('{{ l.id }}', 'approve')">Approve</button>
+                        <button class="btn-action btn-reject"
+                            onclick="actionLeave('{{ l.id }}', 'reject')">Reject</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div style="text-align:center; padding: 40px; color: #64748b; font-style:italic">
+                No leave requests found.
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <script>
+        async function applyLeave() {
+            const type = document.getElementById('l-type').value;
+            const start = document.getElementById('l-start').value;
+            const end = document.getElementById('l-end').value;
+            const reason = document.getElementById('l-reason').value;
+
+            if (!start || !end || !reason) return alert("Please fill all fields");
+
+            try {
+                const res = await fetch('/api/leaves/apply/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, start_date: start, end_date: end, reason })
+                });
+                const d = await res.json();
+                if (d.status === 'ok') {
+                    alert('Leave applied successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + d.message);
+                }
+            } catch (e) {
+                alert('Request failed');
+            }
+        }
+
+        async function actionLeave(id, action) {
+            if (!confirm('Are you sure you want to ' + action + ' this request?')) return;
+            try {
+                const res = await fetch('/api/leaves/action/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ leave_id: id, action: action })
+                });
+                const d = await res.json();
+                if (d.status === 'ok') {
+                    location.reload();
+                } else {
+                    alert('Error: ' + d.message);
+                }
+            } catch (e) {
+                alert('Action failed');
+            }
+        }
+
+        function toggleUserMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('userDropdown');
+            menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+        }
+        document.addEventListener('click', () => {
+            const menu = document.getElementById('userDropdown');
+            if (menu) menu.style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>

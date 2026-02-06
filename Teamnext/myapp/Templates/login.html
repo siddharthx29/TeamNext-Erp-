@@ -1,0 +1,648 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamNext Enterprise Management Tool - Login</title>
+    <link rel="icon" type="image/svg+xml" href="/static/myapp/images/logo.svg">
+    <link rel="stylesheet" href="/static/myapp/css/responsive.css">
+    <link rel="stylesheet" href="/static/myapp/css/theme.css">
+    <script src="/static/myapp/js/theme.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            overflow: hidden;
+            color: #fff;
+        }
+
+
+        .card {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+
+            width: 900px;
+            max-width: 90%;
+            height: 600px;
+            max-height: 90vh;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+
+        .brand-side {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .brand-side::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 70%);
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #7dd3fc, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 16px;
+        }
+
+
+        .form-side {
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+
+        .form-side::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .form-side::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Use global 3D dynamic styles for input/select */
+
+
+
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #020617;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, transparent 0%, rgba(2, 6, 23, 0.4) 100%);
+            pointer-events: none;
+        }
+
+        .mode-toggles {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active,
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .error {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success {
+            color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+                overflow-y: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .card {
+                grid-template-columns: 1fr;
+                height: auto;
+                max-height: none;
+                width: 100%;
+            }
+
+            .brand-side {
+                padding: 30px 20px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .brand-side img {
+                width: 60px !important;
+            }
+
+            .logo-text {
+                font-size: 24px;
+            }
+
+            .form-side {
+                padding: 30px 20px;
+            }
+        }
+
+
+        .modePanel {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <div class="background-overlay"></div>
+    <div class="card">
+
+        <div class="brand-side">
+
+            <img src="{% static 'myapp/images/logo.svg' %}" alt="TeamNext"
+                style="width:100px;height:auto;margin-bottom:8px;">
+            <div class="logo-text">TeamNext</div>
+            <div style="opacity:0.6; font-size:14px; margin-top:4px; text-align:center">Enterprise Management
+                Tool<br>Refined & Future Ready</div>
+        </div>
+
+
+        <div class="form-side">
+            <h2>Access Portal</h2>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <div class="mode-toggles">
+                <button class="mode-btn" data-mode="otp">OTP Login</button>
+                <button class="mode-btn" data-mode="password">Password</button>
+                <button class="mode-btn" data-mode="signup">Sign Up</button>
+            </div>
+
+
+            <div id="mode-otp" class="modePanel">
+                <form method="POST" action="{% url 'send_otp' %}">
+                    {% csrf_token %}
+                    <label style="display:block;margin-bottom:6px;font-size:13px;color:#cbd5e1">Email Address</label>
+                    <input name="email" type="email" placeholder="Company or Employee Email" required>
+                    <input type="hidden" name="purpose" value="login">
+                    <button type="submit">Send Verification Code</button>
+                </form>
+                <div style="text-align:center;margin-top:16px"><a href="/otp/"
+                        style="color:#7dd3fc;font-size:14px">Already have a code? Verify &rarr;</a></div>
+            </div>
+
+
+            <div id="mode-password" class="modePanel" style="display:none;">
+                <form method="POST" action="{% url 'password_login' %}">
+                    {% csrf_token %}
+                    <select name="kind">
+                        <option value="employee">Employee Login</option>
+                        <option value="company">Company Access</option>
+                    </select>
+                    <input name="email" type="email" placeholder="Email Address" required>
+                    <input name="password" type="password" placeholder="Password" required>
+                    <button type="submit">Secure Login</button>
+                    <div style="text-align:center;margin-top:12px"><a href="#" id="forgotLink"
+                            style="color:#94a3b8;font-size:13px">Forgot password?</a></div>
+                </form>
+            </div>
+
+
+            <div id="mode-signup" class="modePanel" style="display:none;">
+                <form method="POST" action="{% url 'signup' %}" id="signupForm">
+                    {% csrf_token %}
+                    <label style="display:block;margin-bottom:6px;font-size:13px;color:#cbd5e1">I am a...</label>
+                    <select name="kind" id="signupKind">
+                        <option value="employee">Employee joining a team</option>
+                        <option value="company">Company registering new workspace</option>
+                    </select>
+
+                    <div id="companyFields" style="display:none">
+                        <input name="company_name" type="text" placeholder="Workspace / Company Name">
+                        <input name="company_email_signup" id="companyEmail" type="email" placeholder="Admin Email"
+                            onchange="resetOtpState()">
+
+
+                        <div style="display:flex;gap:8px;margin-bottom:12px" class="form-row">
+
+                            <input name="company_otp_signup" id="companyOtp" type="text" placeholder="Enter OTP"
+                                style="margin-bottom:0" maxlength="6">
+                            <button type="button" id="getOtpBtn" onclick="requestSignupOtp()"
+                                style="width:140px;margin-top:0;background:rgba(255,255,255,0.1);font-size:13px">Get
+                                OTP</button>
+                        </div>
+                        <div id="otpTimer"
+                            style="font-size:12px;color:#cbd5e1;text-align:right;margin-bottom:12px;display:none">
+                            Expires in <span id="otpCount">05:00</span></div>
+
+                        <input name="company_password_signup" type="password" placeholder="Create Password">
+                        <input name="phone" type="text" placeholder="Contact Phone">
+                        <input name="industry" type="text" placeholder="Industry (optional)">
+                    </div>
+
+                    <div id="employeeFields">
+                        <label style="display:block;margin-bottom:6px;font-size:13px;color:#cbd5e1">Step 1: Verify
+                            Company</label>
+                        <select id="companySelect" name="company_email" style="margin-bottom:8px"
+                            onchange="resetOtpState('employee')">
+                            <option value="">-- Select Company --</option>
+                            {% for c in companies %}
+                            <option value="{{ c.email }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input id="companyFree" type="email" placeholder="Or type company email directly"
+                            onchange="resetOtpState('employee')">
+
+
+                        <div style="display:flex;gap:8px;margin-bottom:12px;margin-top:4px" class="form-row">
+
+                            <input name="employee_otp_signup" id="employeeOtp" type="text"
+                                placeholder="Enter Company OTP" style="margin-bottom:0" maxlength="6">
+                            <button type="button" id="getEmployeeOtpBtn" onclick="requestSignupOtp('employee')"
+                                style="width:140px;margin-top:0;background:rgba(255,255,255,0.1);font-size:13px">Get
+                                OTP</button>
+                        </div>
+                        <div id="otpTimerEmployee"
+                            style="font-size:12px;color:#cbd5e1;text-align:right;margin-bottom:12px;display:none">
+                            Expires in <span id="otpCountEmployee">05:00</span></div>
+
+                        <label style="display:block;margin-top:16px;margin-bottom:6px;font-size:13px;color:#cbd5e1">Step
+                            2: Start Your Profile</label>
+                        <input name="full_name" type="text" placeholder="Your Full Name">
+                        <input name="employee_email_signup" id="employeeEmail" type="email"
+                            placeholder="Your User Email">
+                        <input name="employee_password_signup" type="password" placeholder="Create Password">
+                        <input name="role" type="text" placeholder="Your Role (e.g. Designer)">
+                    </div>
+
+                    <button type="submit" style="background: linear-gradient(135deg, #059669 0%, #34d399 100%)">Create
+                        Account</button>
+                </form>
+            </div>
+
+
+            <div id="forgot-panel" style="display:none;margin-top:16px;">
+                <h4 style="margin-bottom:8px;color:#e2e8f0">Reset Password</h4>
+                <form method="POST" action="{% url 'forgot_password' %}">
+                    {% csrf_token %}
+                    <input name="email" type="email" placeholder="Enter verified email" required>
+                    <button type="submit" style="margin-top:4px">Send Reset OTP</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const btns = document.querySelectorAll('.mode-btn');
+        const panels = document.querySelectorAll('.modePanel');
+
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+
+
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+
+                panels.forEach(p => p.style.display = 'none');
+                document.getElementById('mode-' + mode).style.display = 'block';
+            });
+        });
+
+
+        document.querySelector('[data-mode="otp"]').classList.add('active');
+
+
+        const signupKind = document.getElementById('signupKind');
+        const companyFields = document.getElementById('companyFields');
+        const employeeFields = document.getElementById('employeeFields');
+
+        function updateSignup() {
+            if (signupKind.value === 'company') {
+                companyFields.style.display = 'block';
+                employeeFields.style.display = 'none';
+            } else {
+                companyFields.style.display = 'none';
+                employeeFields.style.display = 'block';
+            }
+        }
+        signupKind.addEventListener('change', updateSignup);
+
+
+        document.getElementById('signupForm').addEventListener('submit', function (e) {
+            console.log('Submitting signup form...');
+            const free = document.getElementById('companyFree').value.trim();
+            if (free && document.getElementById('employeeFields').style.display !== 'none') {
+
+                const existing = document.querySelector('input[name="company_email"].hidden-override');
+                if (existing) existing.remove();
+
+                const inp = document.createElement('input');
+                inp.type = 'hidden';
+                inp.name = 'company_email';
+                inp.value = free;
+                inp.classList.add('hidden-override');
+                this.appendChild(inp);
+
+
+                document.getElementById('companySelect').value = '';
+                document.getElementById('companySelect').removeAttribute('name');
+            } else {
+
+                document.getElementById('companySelect').setAttribute('name', 'company_email');
+            }
+        });
+
+
+        document.getElementById('forgotLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('forgot-panel').style.display = 'block';
+            document.querySelector('.form-side').scrollTo(0, 1000);
+        });
+
+
+        updateSignup();
+
+
+        let otpInterval;
+
+        async function requestSignupOtp(kind) {
+            kind = kind || 'company';
+            const emailId = kind === 'employee' ? 'employeeEmail' : 'companyEmail';
+            const btnId = kind === 'employee' ? 'getEmployeeOtpBtn' : 'getOtpBtn';
+            const timerDivId = kind === 'employee' ? 'otpTimerEmployee' : 'otpTimer';
+
+            const email = document.getElementById(emailId).value;
+            const btn = document.getElementById(btnId);
+            const timerDiv = document.getElementById(timerDivId);
+
+
+            if (kind === 'company' && (!email || !email.includes('@'))) {
+                alert('Please enter a valid email first');
+                return;
+            }
+
+            let targetEmail = email;
+            if (kind === 'employee') {
+                const sel = document.getElementById('companySelect');
+                const free = document.getElementById('companyFree');
+                targetEmail = (free.value || sel.value || '').trim();
+
+                if (!targetEmail || !targetEmail.includes('@')) {
+                    alert('Please select or enter a Company Email first (to send OTP for verification)');
+                    return;
+                }
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            try {
+                const res = await fetch('/api/send-otp-json/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, target_email: targetEmail, kind: kind })
+                });
+                const data = await res.json();
+
+                if (data.status === 'ok') {
+                    btn.textContent = 'Sent!';
+                    timerDiv.style.display = 'block';
+                    startOtpTimer(300, kind);
+                    alert('OTP sent to ' + targetEmail);
+                } else {
+                    btn.textContent = 'Get OTP';
+                    btn.disabled = false;
+                    alert(data.message || 'Failed to send OTP');
+                }
+            } catch (e) {
+                console.error(e);
+                btn.textContent = 'Get OTP';
+                btn.disabled = false;
+                alert('Error connecting to server');
+            }
+        }
+
+        function startOtpTimer(duration, kind) {
+            kind = kind || 'company';
+            const displayId = kind === 'employee' ? 'otpCountEmployee' : 'otpCount';
+            const btnId = kind === 'employee' ? 'getEmployeeOtpBtn' : 'getOtpBtn';
+
+            const display = document.getElementById(displayId);
+            const btn = document.getElementById(btnId);
+
+            let timer = duration, minutes, seconds;
+
+            clearInterval(otpInterval);
+            otpInterval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(otpInterval);
+                    btn.textContent = 'Resend OTP';
+                    btn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        function resetOtpState(kind) {
+            kind = kind || 'company';
+            const btnId = kind === 'employee' ? 'getEmployeeOtpBtn' : 'getOtpBtn';
+            const timerDivId = kind === 'employee' ? 'otpTimerEmployee' : 'otpTimer';
+
+            clearInterval(otpInterval);
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.textContent = 'Get OTP';
+                btn.disabled = false;
+            }
+            const timerDiv = document.getElementById(timerDivId);
+            if (timerDiv) timerDiv.style.display = 'none';
+        }
+
+
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null };
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            const particleCount = Math.floor((canvas.width * canvas.height) / 10000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = (Math.random() - 0.5) * 0.8;
+                this.color = `hsla(${210 + Math.random() * 40}, 70%, 60%, ${Math.random() * 0.4 + 0.2})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.strokeStyle = `rgba(125, 211, 252, ${0.15 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        initCanvas();
+        animate();
+    </script>
+</body>
+
+</html>
+</script>
+</body>
+
+</html>
