@@ -216,13 +216,17 @@
           <div style="margin-top:8px"><input id="tTitle" placeholder="Short title"></div>
           <div style="margin-top:8px"><textarea id="tDesc" rows="6" placeholder="Describe the issue"></textarea></div>
 
-          <div style="margin-top:8px" class="form-row">
-            <select id="assigneeSel">
+          <div style="margin-top:8px">
+            <label for="assigneeSel" style="display:block; margin-bottom:6px; font-size:13px; color:#cbd5e1">Assign to Employee</label>
+            <select id="assigneeSel" style="width:100%">
               <option value="">Unassigned</option>
               {% for dev in developers %}
               <option value="{{ dev.email }}">{{ dev.name }}</option>
               {% endfor %}
             </select>
+          </div>
+
+          <div style="margin-top:8px">
             <button id="createBtn">Create Ticket</button>
           </div>
 
@@ -233,16 +237,40 @@
           <h3>Recent Tickets</h3>
           {% if recent %}
           {% for t in recent %}
-          <div class="ticket-item">
-            <div style="display:flex;justify-content:space-between"><strong>{{ t.title }}</strong><span>{{
-                t.priority|upper }}</span></div>
-            <div style="color:#bcd2ea;font-size:13px">Project: {{ t.project.name }} • Assigned: {{
-              t.employee.name|default:'Unassigned' }}</div>
-            <div style="margin-top:6px;color:#d6e8fb">{{ t.description }}</div>
+          <div class="ticket-item" style="border-left: 4px solid {% if t.priority == 'high' %}#f87171{% elif t.priority == 'medium' %}#fbbf24{% else %}#93c5fd{% endif %}; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+              <div style="flex:1">
+                <strong style="font-size:14px;color:#e2e8f0">{{ t.title }}</strong>
+              </div>
+              <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:{% if t.priority == 'high' %}rgba(248,113,113,0.2);color:#f87171{% elif t.priority == 'medium' %}rgba(251,191,36,0.2);color:#fbbf24{% else %}rgba(147,197,253,0.2);color:#93c5fd{% endif %}">
+                {{ t.priority|upper }}
+              </span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;font-size:12px">
+              <div>
+                <span style="color:#94a3b8">Project:</span>
+                <div style="color:#cbd5e1;font-weight:500">{{ t.project.name }}</div>
+              </div>
+              <div>
+                <span style="color:#94a3b8">Assigned to:</span>
+                <div style="color:{% if t.employee %}#34d399{% else %}#fbbf24{% endif %};font-weight:500">
+                  {{ t.employee.name|default:'🔸 Unassigned' }}
+                </div>
+              </div>
+            </div>
+            <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;margin-top:8px">
+              <div style="color:#bcd2ea;font-size:12px;line-height:1.5">{{ t.description|truncatewords:30 }}</div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:#64748b">
+              Created: {{ t.created_at|date:"M d, Y" }}
+            </div>
           </div>
           {% endfor %}
           {% else %}
-          <div>No tickets yet.</div>
+          <div style="text-align:center;padding:24px;color:#64748b">
+            <div style="font-size:14px">No tickets yet</div>
+            <div style="font-size:12px;margin-top:4px">Create your first ticket to get started</div>
+          </div>
           {% endif %}
         </div>
       </main>
@@ -254,21 +282,27 @@
       try {
         const res = await fetch('/api/developers/');
         const data = await res.json();
-        if (data.status === 'ok') {
+        if (data.status === 'ok' && data.developers.length > 0) {
           const sel = document.getElementById('assigneeSel');
           if (!sel) return;
 
+          const selectedValue = sel.value;
           const first = sel.options[0];
           sel.innerHTML = '';
           if (first) sel.appendChild(first);
+          
           data.developers.forEach(d => {
             const opt = document.createElement('option');
             opt.value = d.email;
             opt.textContent = d.name;
             sel.appendChild(opt);
           });
+          
+          if (selectedValue) sel.value = selectedValue;
         }
-      } catch (e) { console.error(e); }
+      } catch (e) { 
+        console.error('Error loading employees:', e); 
+      }
     }
 
 

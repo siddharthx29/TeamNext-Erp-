@@ -456,6 +456,13 @@
             }
         };
 
+        chatInput.onkeypress = async (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendChatBtn.click();
+            }
+        };
+
         projectSelect.onchange = loadMessages;
         setInterval(loadMessages, 5000);
         loadMessages();

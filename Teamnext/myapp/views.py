@@ -2482,8 +2482,41 @@ def hr_page(request):
     if not request.session.get('verified'):
         return redirect('login')
     email = request.session.get('otp_email')
-    company_name = request.session.get('company_name', 'TeamNext')
-    return render(request, 'hr_page.html', {'email': email, 'company_name': company_name})
+    
+    co = Company.objects.filter(email=email).first()
+    if not co:
+        emp = Employee.objects.filter(email=email).first()
+        co = emp.company if emp else None
+    
+    if not co:
+        return redirect('dashboard')
+    
+    # Get employee statistics
+    total_employees = Employee.objects.filter(company=co).count()
+    
+    # Get today's attendance
+    today = timezone.now().date()
+    on_leave_today = LeaveRequest.objects.filter(
+        employee__company=co,
+        status='approved',
+        start_date__lte=today,
+        end_date__gte=today
+    ).count()
+    
+    # Get attendance stats
+    present_today = Attendance.objects.filter(
+        employee__company=co,
+        date=today,
+        status='present'
+    ).count()
+    
+    return render(request, 'hr_page.html', {
+        'email': email,
+        'company_name': co.name,
+        'total_employees': total_employees,
+        'on_leave_today': on_leave_today,
+        'present_today': present_today
+    })
 
 def inventory_page(request):
     if not request.session.get('verified'):
@@ -2824,4 +2857,222 @@ def seed_dashboard_data(request):
                 )
 
     return JsonResponse({'status': 'ok', 'message': 'Demo data seeded successfully'})
+
+
+# HR Management APIs
+@csrf_exempt
+def api_hr_employees(request):
+    """Get all employees for the company"""
+    if not request.session.get('verified'):
+        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+    
+    email = request.session.get('otp_email')
+    co = Company.objects.filter(email=email).first()
+    if not co:
+        emp = Employee.objects.filter(email=email).first()
+        co = emp.company if emp else None
+    
+    if not co:
+        return JsonResponse({'status': 'error', 'message': 'Company not found'}, status=404)
+    
+    employees = Employee.objects.filter(company=co).order_by('name')
+    employee_list = []
+    
+    for emp in employees:
+        # Get latest attendance
+        today = timezone.now().date()
+        attendance_today = Attendance.objects.filter(employee=emp, date=today).first()
+        
+        employee_list.append({
+            'id': emp.id,
+            'name': emp.name,
+            'email': emp.email,
+            'role': emp.role or 'Employee',
+            'department': emp.dept.name if emp.dept else 'Unassigned',
+            'phone': emp.phone or '',
+            'created_at': emp.created_at.strftime('%Y-%m-%d'),
+            'attendance_status': attendance_today.status if attendance_today else 'absent',
+            'check_in': attendance_today.check_in.strftime('%H:%M') if attendance_today and attendance_today.check_in else None,
+            'check_out': attendance_today.check_out.strftime('%H:%M') if attendance_today and attendance_today.check_out else None
+        })
+    
+    return JsonResponse({'status': 'ok', 'employees': employee_list})
+
+
+@csrf_exempt
+def api_hr_add_employee(request):
+    """Add a new employee"""
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=405)
+    
+    if not request.session.get('verified'):
+        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+    
+    try:
+        import json
+        data = json.loads(request.body.decode('utf-8'))
+        
+        email = request.session.get('otp_email')
+        co = Company.objects.filter(email=email).first()
+        
+        if not co:
+            return JsonResponse({'status': 'error', 'message': 'Only company admins can add employees'}, status=403)
+        
+        # Check if employee already exists
+        if Employee.objects.filter(email=data.get('email')).exists():
+            return JsonResponse({'status': 'error', 'message': 'Employee with this email already exists'}, status=400)
+        
+        # Get department if provided
+        department = None
+        dept_id = data.get('department_id')
+        if dept_id:
+            department = Department.objects.filter(id=dept_id, company=co).first()
+        
+        # Create employee
+        employee = Employee.objects.create(
+            company=co,
+            name=data.get('name'),
+            email=data.get('email'),
+            password='changeme123',  # Default password
+            role=data.get('role', 'Employee'),
+            dept=department,
+            phone=data.get('phone', '')
+        )
+        
+        return JsonResponse({
+            'status': 'ok',
+            'message': f'Employee {employee.name} added successfully',
+            'employee': {
+                'id': employee.id,
+                'name': employee.name,
+                'email': employee.email,
+                'role': employee.role,
+                'department': department.name if department else 'Unassigned'
+            }
+        })
+    
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+def api_hr_mark_attendance(request):
+    """Mark attendance for an employee"""
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=405)
+    
+    if not request.session.get('verified'):
+        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+    
+    try:
+        import json
+        from datetime import datetime
+        data = json.loads(request.body.decode('utf-8'))
+        
+        email = request.session.get('otp_email')
+        co = Company.objects.filter(email=email).first()
+        if not co:
+            emp = Employee.objects.filter(email=email).first()
+            co = emp.company if emp else None
+        
+        if not co:
+            return JsonResponse({'status': 'error', 'message': 'Company not found'}, status=404)
+        
+        employee_id = data.get('employee_id')
+        status = data.get('status', 'present')
+        check_in = data.get('check_in')
+        check_out = data.get('check_out')
+        date_str = data.get('date')
+        
+        # Get employee
+        employee = Employee.objects.filter(id=employee_id, company=co).first()
+        if not employee:
+            return JsonResponse({'status': 'error', 'message': 'Employee not found'}, status=404)
+        
+        # Parse date
+        if date_str:
+            attendance_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        else:
+            attendance_date = timezone.now().date()
+        
+        # Create or update attendance
+        attendance, created = Attendance.objects.update_or_create(
+            employee=employee,
+            date=attendance_date,
+            defaults={
+                'status': status,
+                'check_in': check_in if check_in else None,
+                'check_out': check_out if check_out else None
+            }
+        )
+        
+        action = 'marked' if created else 'updated'
+        return JsonResponse({
+            'status': 'ok',
+            'message': f'Attendance {action} for {employee.name}',
+            'attendance': {
+                'employee_name': employee.name,
+                'date': attendance_date.strftime('%Y-%m-%d'),
+                'status': status,
+                'check_in': check_in,
+                'check_out': check_out
+            }
+        })
+    
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+def api_hr_attendance_records(request):
+    """Get attendance records for all employees"""
+    if not request.session.get('verified'):
+        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+    
+    email = request.session.get('otp_email')
+    co = Company.objects.filter(email=email).first()
+    if not co:
+        emp = Employee.objects.filter(email=email).first()
+        co = emp.company if emp else None
+    
+    if not co:
+        return JsonResponse({'status': 'error', 'message': 'Company not found'}, status=404)
+    
+    # Get date range from query params
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+    
+    if from_date and to_date:
+        from datetime import datetime
+        from_date = datetime.strptime(from_date, '%Y-%m-%d').date()
+        to_date = datetime.strptime(to_date, '%Y-%m-%d').date()
+        attendance_records = Attendance.objects.filter(
+            employee__company=co,
+            date__gte=from_date,
+            date__lte=to_date
+        ).order_by('-date', 'employee__name')
+    else:
+        # Default to last 7 days
+        today = timezone.now().date()
+        week_ago = today - timedelta(days=7)
+        attendance_records = Attendance.objects.filter(
+            employee__company=co,
+            date__gte=week_ago,
+            date__lte=today
+        ).order_by('-date', 'employee__name')
+    
+    records = []
+    for record in attendance_records:
+        records.append({
+            'id': record.id,
+            'employee_id': record.employee.id,
+            'employee_name': record.employee.name,
+            'employee_role': record.employee.role or 'Employee',
+            'date': record.date.strftime('%Y-%m-%d'),
+            'status': record.status,
+            'check_in': record.check_in.strftime('%H:%M') if record.check_in else None,
+            'check_out': record.check_out.strftime('%H:%M') if record.check_out else None
+        })
+    
+    return JsonResponse({'status': 'ok', 'records': records})
 
