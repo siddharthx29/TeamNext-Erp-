@@ -372,8 +372,14 @@
                         <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 8px 0;"></div>
 
                         <input id="ticketTitle" placeholder="Ticket title">
+                        <select id="ticketPriority" class="compact-input" style="width:100%; margin-bottom:6px;">
+                            <option value="medium">🟡 Medium Priority</option>
+                            <option value="high">🔴 High Priority</option>
+                            <option value="low">🟢 Low Priority</option>
+                        </select>
                         <button id="createTicketBtn" class="btn-primary"
-                            style="background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e;">Raise Ticket</button>
+                            style="background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; width:100%;">🎫 Raise
+                            Ticket</button>
                     </div>
                     <div id="actionStatus" style="font-size: 11px; margin-top: 10px; text-align: center;"></div>
                 </div>
@@ -519,24 +525,38 @@
 
         const createTicketBtn = document.getElementById('createTicketBtn');
         const ticketTitle = document.getElementById('ticketTitle');
+        const ticketPriority = document.getElementById('ticketPriority');
 
         createTicketBtn.onclick = async () => {
             const title = ticketTitle.value.trim();
-            if (!title) return;
+            const priority = ticketPriority ? ticketPriority.value : 'medium';
+            const pId = projectSelect ? projectSelect.value : null;
+            if (!title) {
+                actionStatus.textContent = 'Please enter a ticket title';
+                actionStatus.style.color = '#f87171';
+                return;
+            }
             actionStatus.textContent = 'Creating ticket...';
+            actionStatus.style.color = '#94a3b8';
             try {
                 const res = await fetch('/dashboard/create-ticket/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, project_id: projectSelect.value, description: 'Created from dashboard speed dial' })
+                    body: JSON.stringify({ title, priority, project_id: pId, description: 'Created from dashboard quick actions' })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    actionStatus.textContent = 'Ticket raised!';
+                    actionStatus.textContent = '✅ ' + (data.message || 'Ticket raised!');
                     actionStatus.style.color = '#34d399';
                     ticketTitle.value = '';
+                } else {
+                    actionStatus.textContent = '❌ ' + (data.message || 'Failed to raise ticket');
+                    actionStatus.style.color = '#f87171';
                 }
-            } catch (e) { }
+            } catch (e) {
+                actionStatus.textContent = '❌ Connection error. Please try again.';
+                actionStatus.style.color = '#f87171';
+            }
         };
 
         // Canvas Background logic

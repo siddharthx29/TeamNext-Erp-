@@ -1,4 +1,4 @@
-import random
+﻿import random
 
 import time
 
@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from django.core.mail import send_mail
+from django.conf import settings
 
 from django.http import JsonResponse, HttpResponseBadRequest
 
@@ -122,11 +123,23 @@ Best regards,
 TeamNext Enterprise Management Tool Team
             """,
 
-            "nsb566@gmail.com",
+            settings.EMAIL_HOST_USER,
 
             [email],
 
-            fail_silently=False
+            fail_silently=False,
+            html_message=f"""
+            <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
+                <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
+                <p style='color: #374151; font-size: 16px;'>Hello,</p>
+                <p style='color: #374151; font-size: 16px;'>We received a request for an account verification or login. Your OTP verification code is:</p>
+                <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
+                    <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
+                </div>
+                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
+                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+            </div>
+            """
 
         )
 
@@ -211,17 +224,23 @@ def api_send_otp_json(request):
             recipients = [email]
 
         send_mail(
-
             "Verify Your Account - TeamNext Enterprise Management Tool",
-
             msg,
-
-            "nsb566@gmail.com",
-
+            settings.EMAIL_HOST_USER,
             recipients,
-
-            fail_silently=False
-
+            fail_silently=False, 
+            html_message=f"""
+            <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
+                <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
+                <p style='color: #374151; font-size: 16px;'>Hello,</p>
+                <p style='color: #374151; font-size: 16px;'>We received a request for an account verification or login. Your OTP verification code is:</p>
+                <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
+                    <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
+                </div>
+                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
+                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+            </div>
+            """
         )
 
         return JsonResponse({'status': 'ok'})
@@ -357,11 +376,23 @@ Best regards,
 TeamNext Enterprise Management Tool Team
         """,
 
-        "nsb566@gmail.com",
+        settings.EMAIL_HOST_USER,
 
         [email],
 
-        fail_silently=False
+        fail_silently=False,
+            html_message=f"""
+            <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
+                <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
+                <p style='color: #374151; font-size: 16px;'>Hello,</p>
+                <p style='color: #374151; font-size: 16px;'>We received a request for an account verification or login. Your OTP verification code is:</p>
+                <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
+                    <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
+                </div>
+                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
+                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+            </div>
+            """
 
     )
 
@@ -565,11 +596,23 @@ def _send_signup_otp(request, email):
 
         f"Hello,\n\nYour OTP for account verification is: {otp}\n\nExpires in 5 minutes.",
 
-        "nsb566@gmail.com",
+        settings.EMAIL_HOST_USER,
 
         [email],
 
-        fail_silently=False
+        fail_silently=False,
+            html_message=f"""
+            <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
+                <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
+                <p style='color: #374151; font-size: 16px;'>Hello,</p>
+                <p style='color: #374151; font-size: 16px;'>We received a request for an account verification or login. Your OTP verification code is:</p>
+                <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
+                    <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
+                </div>
+                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
+                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+            </div>
+            """
 
     )
 
@@ -1158,7 +1201,7 @@ def send_dashboard_email(request):
 
                 body,
 
-                "nsb566@gmail.com",
+                settings.EMAIL_HOST_USER,
 
                 [to],
 
@@ -1398,12 +1441,23 @@ def add_developer(request):
 
             f"Hello,\n\nA developer '{name}' ({email}) is being added to your workspace.\nThe verification OTP is: {otp}\nIt expires in 5 minutes.",
 
-            "nsb566@gmail.com",
+            settings.EMAIL_HOST_USER,
 
             recipient,
 
             fail_silently=True,
-
+            html_message=f"""
+            <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
+                <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Developer Access</h2>
+                <p style='color: #374151; font-size: 16px;'>Hello,</p>
+                <p style='color: #374151; font-size: 16px;'>A developer '<b>{name}</b>' ({email}) is being added to your workspace. The verification OTP is:</p>
+                <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
+                    <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
+                </div>
+                <p style='color: #4b5563; font-size: 14px;'>It expires in 5 minutes.</p>
+                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+            </div>
+            """
         )
 
     except Exception:
@@ -3075,4 +3129,58 @@ def api_hr_attendance_records(request):
         })
     
     return JsonResponse({'status': 'ok', 'records': records})
+
+
+@csrf_exempt
+def create_ticket(request):
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid method'})
+    try:
+        import json
+        data = json.loads(request.body.decode('utf-8'))
+        title = (data.get('title') or '').strip()
+        project_id = data.get('project_id')
+        description = data.get('description', 'Created from dashboard quick actions') or 'Created from dashboard quick actions'
+        priority = data.get('priority', 'medium')
+
+        email = request.session.get('otp_email')
+        if not email:
+            return JsonResponse({'status': 'error', 'message': 'Not authenticated'})
+
+        emp = Employee.objects.filter(email=email).first()
+        co = Company.objects.filter(email=email).first()
+        if emp:
+            co = emp.company
+        if not co:
+            return JsonResponse({'status': 'error', 'message': 'Workspace not found'})
+
+        if not title:
+            return JsonResponse({'status': 'error', 'message': 'Ticket title is required'})
+
+        # Try to find the project by ID; fall back to the first project in the company
+        proj = None
+        if project_id:
+            try:
+                proj = Project.objects.filter(id=int(project_id), company=co).first()
+            except (ValueError, TypeError):
+                proj = None
+
+        if not proj:
+            # Fall back to first available project for this workspace
+            proj = Project.objects.filter(company=co).first()
+
+        if not proj:
+            return JsonResponse({'status': 'error', 'message': 'No project found. Please create a project first from the Departments page.'})
+
+        # Ticket model only has: project, employee, title, description, priority
+        Ticket.objects.create(
+            project=proj,
+            employee=emp if emp else None,
+            title=title,
+            description=description,
+            priority=priority if priority in ('high', 'medium', 'low') else 'medium',
+        )
+        return JsonResponse({'status': 'success', 'message': f'Ticket "{title}" raised in project "{proj.name}"'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
 

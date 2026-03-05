@@ -5,6 +5,10 @@ Django settings for project.
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
+
+# Load variables from .env file into environment
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -102,5 +106,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
 
-# Static file settings for whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Email Settings
+if 'EMAIL_HOST' in os.environ:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+else:
+    # Outputs emails to the console for local development
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
