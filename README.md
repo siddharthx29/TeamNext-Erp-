@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 🚀 Office ERP Management System
 Django Full-Stack Web Application
 
@@ -53,3 +54,6 @@ Centralized control panel
 Database operations
 
 Reports & analytics
+=======
+# Enterprise-Management-System-
+>>>>>>> 1bbc4f4b52f520c15fc94ac946ff2c570f225e06
