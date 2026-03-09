@@ -126,6 +126,7 @@ def send_otp(request):
             messages.success(request, f"OTP sent to {', '.join(email_list)}")
             request.session["otp_email"] = email_list[0] # Store primary email for session
         except Exception as e:
+            print(f"CRITICAL EMAIL ERROR: {str(e)}") # This will show in Render Logs
             messages.error(request, f"Failed to send email: {str(e)}")
             return redirect('login')
 
