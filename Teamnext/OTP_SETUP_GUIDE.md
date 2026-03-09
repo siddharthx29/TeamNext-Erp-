@@ -7,26 +7,27 @@
 3. **Real Email Delivery** - OTP emails are sent to actual Gmail inboxes
 4. **HTML Email Format** - Beautiful, professional email design
 
-## 📧 How to Configure Email (Gmail)
+## 📧 How to Configure Email (Brevo - Recommended)
 
-### Step 1: Get Gmail App Password
+### Step 1: Get Brevo SMTP Key
 
-1. Go to: https://myaccount.google.com/apppasswords
-2. Sign in with your Gmail account
-3. If 2-Step Verification is not enabled, enable it first
-4. Under "Select app", choose **Mail**
-5. Under "Select device", choose **Other (Custom name)**
-6. Type "TeamNext ERP"
-7. Click **Generate**
-8. Copy the 16-character password (remove spaces)
+1. Go to: [Brevo SMTP & API Settings](https://app.brevo.com/settings/keys/smtp)
+2. Sign in to your Brevo account.
+3. Click on **SMTP & API** section.
+4. Click on **Generate a new SMTP key**.
+5. Give it a name like "TeamNext ERP".
+6. **Copy the SMTP Key** (This is your `EMAIL_HOST_PASSWORD`).
 
-### Step 2: Update settings.py
+### Step 2: Update Your Environment (.env)
 
-Open `Teamnext/project/settings.py` and update:
+Update your `.env` file with these settings:
 
-```python
-EMAIL_HOST_USER = 'your-email@gmail.com'   # Your Gmail address
-EMAIL_HOST_PASSWORD = 'your-16-char-app-password'  # App Password from Step 1
+```env
+EMAIL_HOST=smtp-relay.brevo.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your-brevo-login-email@example.com
+EMAIL_HOST_PASSWORD=your-generated-smtp-key
+DEFAULT_FROM_EMAIL=your-verified-sender@example.com
 ```
 
 ### Step 3: Restart Django Server
@@ -105,14 +106,14 @@ If `EMAIL_HOST_USER` or `EMAIL_HOST_PASSWORD` is empty:
 
 **Single Email:**
 ```
-Input: nsb566@gmail.com
-Result: OTP sent to nsb566@gmail.com
+Input: user@example.com
+Result: OTP sent to user@example.com
 ```
 
 **Multiple Emails:**
 ```
-Input: nsb566@gmail.com, test@example.com
-Result: OTP sent to 3 email addresses
+Input: user1@example.com, user2@example.com
+Result: OTP sent to 2 email addresses
 All emails receive the same OTP code
 ```
 

@@ -107,8 +107,8 @@ def send_otp(request):
         try:
             send_mail(
                 "Your OTP Code - TeamNext ERP",
-                f"Hello,\n\nYour OTP is: {otp}\n\nThis code will expire in 2 minutes.",
-                settings.EMAIL_HOST_USER,
+                f"Hello,\n\nYour OTP is: {otp}\n\nThis code will expire in 5 minutes.",
+                settings.DEFAULT_FROM_EMAIL,
                 email_list,
                 fail_silently=False,
                 html_message=f"""
@@ -119,7 +119,7 @@ def send_otp(request):
                     <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
                         <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
                     </div>
-                    <p style='color: #4b5563; font-size: 14px;'>This code will expire in 2 minutes.</p>
+                    <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes.</p>
                 </div>
                 """
             )
@@ -211,7 +211,7 @@ def api_send_otp_json(request):
         send_mail(
             "Verify Your Account - TeamNext Enterprise Management Tool",
             msg,
-            settings.EMAIL_HOST_USER,
+            settings.DEFAULT_FROM_EMAIL,
             recipients,
             fail_silently=False, 
             html_message=f"""
@@ -321,14 +321,14 @@ def verify_otp(request):
         if email and count < 3:
             new_otp = str(random.randint(1000, 9999))
             request.session["otp"] = new_otp
-            request.session["otp_expiry"] = time.time() + 120
+            request.session["otp_expiry"] = time.time() + 300
             request.session["resend_count"] = count + 1
 
             try:
                 send_mail(
                     "New OTP Code - TeamNext Enterprise Management Tool",
-                    f"Hello,\n\nYour previous OTP was incorrect. Your new OTP is: {new_otp}\n\nThis OTP will expire in 2 minutes.",
-                    settings.EMAIL_HOST_USER,
+                    f"Hello,\n\nYour previous OTP was incorrect. Your new OTP is: {new_otp}\n\nThis OTP will expire in 5 minutes.",
+                    settings.DEFAULT_FROM_EMAIL,
                     [email],
                     fail_silently=False,
                     html_message=f"""
@@ -339,7 +339,7 @@ def verify_otp(request):
                         <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
                             <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{new_otp}</strong>
                         </div>
-                        <p style='color: #4b5563; font-size: 14px;'>This code will expire in 2 minutes. If you did not request this, please safely ignore this email.</p>
+                        <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
                         <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
                     </div>
                     """
@@ -377,7 +377,7 @@ def resend_otp(request):
 
     request.session["otp"] = otp
 
-    request.session["otp_expiry"] = time.time() + 120
+    request.session["otp_expiry"] = time.time() + 300
 
     request.session["resend_count"] = count + 1
 
@@ -390,7 +390,7 @@ Hello,
 
 Your new OTP for TeamNext Enterprise Management Tool login is: {otp}
 
-This OTP will expire in 2 minutes.
+This OTP will expire in 5 minutes.
 
 If you didn't request this OTP, please ignore this email.
 
@@ -398,7 +398,7 @@ Best regards,
 TeamNext Enterprise Management Tool Team
         """,
 
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
 
         [email],
 
@@ -618,7 +618,7 @@ def _send_signup_otp(request, email):
 
         f"Hello,\n\nYour OTP for account verification is: {otp}\n\nExpires in 5 minutes.",
 
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
 
         [email],
 

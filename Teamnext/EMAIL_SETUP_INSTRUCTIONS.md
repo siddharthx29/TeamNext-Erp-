@@ -1,42 +1,36 @@
 # Email Setup Instructions for TeamNext ERP
 
-## How to Configure Gmail to Send OTP Emails
+## How to Configure Brevo for OTP Emails (Highly Recommended)
 
-To receive OTP emails in your Gmail inbox (like nsb566@gmail.com), follow these steps:
+Brevo is more reliable than Gmail and doesn't require constant App Password updates.
 
-### Step 1: Enable 2-Step Verification
-1. Go to your Google Account: https://myaccount.google.com/
-2. Click on **Security** in the left sidebar
-3. Under "Signing in to Google", find **2-Step Verification**
-4. Click on it and follow the prompts to enable it
+### Step 1: Create a Brevo Account
+1. Go to: [Brevo](https://www.brevo.com/) and create a free account.
+2. Verify your email address.
 
-### Step 2: Generate an App Password
-1. Go to: https://myaccount.google.com/apppasswords
-2. You may need to sign in again
-3. Under "Select app", choose **Mail**
-4. Under "Select device", choose **Other (Custom name)**
-5. Type "TeamNext ERP" or any name you prefer
-6. Click **Generate**
-7. Google will show you a 16-character password (like: `abcd efgh ijkl mnop`)
-8. **Copy this password** (you can remove the spaces)
+### Step 2: Get your SMTP Key
+1. In the Brevo dashboard, go to the **top-right menu** and select **SMTP & API**.
+2. Click on the **SMTP** tab.
+3. Click on **Generate a new SMTP key**.
+4. Give it a name like "TeamNext ERP Production".
+5. **Copy the generated key** immediately — you won't be able to see it again!
 
-### Step 3: Update settings.py
-1. Open `Teamnext/project/settings.py`
-2. Find the email settings section
-3. Update these two lines:
-   ```python
-   EMAIL_HOST_USER = 'your-email@gmail.com'  # Your Gmail address
-   EMAIL_HOST_PASSWORD = 'your-16-char-app-password'  # The App Password from Step 2
-   ```
-4. Save the file
-5. Restart your Django server
+### Step 3: Update .env File
+Update your `.env` file with these settings:
+
+```env
+EMAIL_HOST=smtp-relay.brevo.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your-brevo-username@example.com
+EMAIL_HOST_PASSWORD=your-generated-brevo-smtp-key
+DEFAULT_FROM_EMAIL=your-verified-brevo-sender@example.com
+```
 
 ### Step 4: Test
-1. Go to the login page
-2. Click "Login with OTP"
-3. Enter your registered email
-4. Check your Gmail inbox for the OTP email
-5. The email will have a beautiful HTML format with the OTP clearly displayed
+1. Go to the login page of TeamNext ERP.
+2. Enter your email and click "Login with OTP".
+3. Check your inbox (and spam folder) for the OTP.
+4. The email will have a professional HTML format with the code clearly displayed.
 
 ### Troubleshooting
 
