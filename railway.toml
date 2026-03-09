@@ -1,6 +1,0 @@
-[build]
-builder = "NIXPACKS"
-watchEdges = ["Teamnext/**"]
-
-[deploy]
-startCommand = "cd Teamnext && gunicorn project.wsgi --bind 0.0.0.0:$PORT"
