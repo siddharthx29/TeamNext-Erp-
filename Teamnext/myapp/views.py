@@ -88,7 +88,7 @@ def send_otp(request):
 
             return redirect("login")
 
-        otp = str(random.randint(100000, 999999))
+        otp = str(random.randint(1000, 9999))
 
         request.session["otp"] = otp
 
@@ -197,7 +197,7 @@ def api_send_otp_json(request):
 
         verification_email = target_email if target_email else email
 
-        otp = str(random.randint(100000, 999999))
+        otp = str(random.randint(1000, 9999))
 
         request.session["otp"] = otp
 
@@ -329,7 +329,44 @@ def verify_otp(request):
 
     else:
 
-        messages.error(request, "Invalid OTP. Please try again.")
+        # Invalid OTP — automatically generate and send a new one
+        email = request.session.get("otp_email")
+        count = request.session.get("resend_count", 0)
+
+        if email and count < 3:
+            new_otp = str(random.randint(1000, 9999))
+            request.session["otp"] = new_otp
+            request.session["otp_expiry"] = time.time() + 120
+            request.session["resend_count"] = count + 1
+
+            try:
+                send_mail(
+                    "New OTP Code - TeamNext Enterprise Management Tool",
+                    f"Hello,\n\nYour previous OTP was incorrect. Your new OTP is: {new_otp}\n\nThis OTP will expire in 2 minutes.",
+                    settings.EMAIL_HOST_USER,
+                    [email],
+                    fail_silently=False,
+                    html_message=f"""
+                    <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
+                        <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
+                        <p style='color: #374151; font-size: 16px;'>Hello,</p>
+                        <p style='color: #374151; font-size: 16px;'>Your previous code was incorrect. Here is your new verification code:</p>
+                        <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
+                            <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{new_otp}</strong>
+                        </div>
+                        <p style='color: #4b5563; font-size: 14px;'>This code will expire in 2 minutes. If you did not request this, please safely ignore this email.</p>
+                        <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+                    </div>
+                    """
+                )
+                messages.error(request, f"Invalid OTP. A new code has been sent to {email}.")
+            except Exception:
+                messages.error(request, "Invalid OTP. Failed to send new code — please resend manually.")
+        elif email and count >= 3:
+            messages.error(request, "Invalid OTP. Max resend limit reached. Please login again.")
+            return redirect("login")
+        else:
+            messages.error(request, "Invalid OTP. Please try again.")
 
         return redirect("otp")
 
@@ -351,7 +388,7 @@ def resend_otp(request):
 
         return redirect("login")
 
-    otp = str(random.randint(100000, 999999))
+    otp = str(random.randint(1000, 9999))
 
     request.session["otp"] = otp
 
@@ -580,7 +617,7 @@ def signup_view(request):
 
 def _send_signup_otp(request, email):
 
-    otp = str(random.randint(100000, 999999))
+    otp = str(random.randint(1000, 9999))
 
     request.session["otp"] = otp
 
@@ -1405,7 +1442,7 @@ def add_developer(request):
 
         return JsonResponse({"status": "error", "message": "Missing name or email"}, status=400)
 
-    otp = str(random.randint(100000, 999999))
+    otp = str(random.randint(1000, 9999))
 
     expiry = time.time() + 300
 

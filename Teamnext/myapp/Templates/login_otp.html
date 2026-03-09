@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -179,35 +180,11 @@
     <div class="card">
 
         <div style="text-align: center; margin-bottom: 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="180" height="54"
-                style="display: block; margin: 0 auto;">
-                <defs>
-                    <linearGradient id="logoGradient6" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#4ecdc4;stop-opacity:1" />
-                    </linearGradient>
-                    <linearGradient id="iconGradient6" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#4ecdc4;stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-                <g>
-                    <circle cx="25" cy="30" r="8" fill="url(#iconGradient6)" opacity="0.9" />
-                    <circle cx="10" cy="15" r="6" fill="url(#iconGradient6)" opacity="0.8" />
-                    <circle cx="40" cy="15" r="6" fill="url(#iconGradient6)" opacity="0.8" />
-                    <circle cx="10" cy="45" r="6" fill="url(#iconGradient6)" opacity="0.8" />
-                    <circle cx="40" cy="45" r="6" fill="url(#iconGradient6)" opacity="0.8" />
-                    <line x1="25" y1="30" x2="10" y2="15" stroke="url(#iconGradient6)" stroke-width="2" opacity="0.6" />
-                    <line x1="25" y1="30" x2="40" y2="15" stroke="url(#iconGradient6)" stroke-width="2" opacity="0.6" />
-                    <line x1="25" y1="30" x2="10" y2="45" stroke="url(#iconGradient6)" stroke-width="2" opacity="0.6" />
-                    <line x1="25" y1="30" x2="40" y2="45" stroke="url(#iconGradient6)" stroke-width="2" opacity="0.6" />
-                    <path d="M 45 30 L 50 25 L 50 30 L 50 35 Z" fill="url(#iconGradient6)" opacity="0.9" />
-                </g>
-                <text x="60" y="25" font-family="'Segoe UI', 'Arial', sans-serif" font-size="22" font-weight="bold"
-                    fill="url(#logoGradient6)">TeamNext</text>
-                <text x="60" y="45" font-family="'Segoe UI', 'Arial', sans-serif" font-size="8" font-weight="600"
-                    fill="#4ecdc4" opacity="0.8">Enterprise Management Tool</text>
-            </svg>
+            <div
+                style="display:inline-block; background:rgba(255,255,255,0.95); border-radius:14px; padding:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+                <img src="{% static 'myapp/images/teamnext_logo.png' %}" alt="TeamNext ERP"
+                    style="width:140px; height:auto; display:block;">
+            </div>
         </div>
         <h2>Login with OTP</h2>
         <p style="text-align: center; margin-bottom: 20px; opacity: 0.8;">Enter your registered email to receive OTP</p>

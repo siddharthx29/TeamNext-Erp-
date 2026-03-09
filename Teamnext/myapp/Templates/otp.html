@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -260,48 +261,80 @@
             }
         }
 
-        input {
-            width: 100%;
-            padding: 18px 20px;
-            margin: 15px 0;
-            border-radius: 12px;
-            border: none;
+        .otp-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin: 20px 0;
+        }
+
+        .otp-inputs input {
+            width: 68px;
+            height: 78px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
             background:
                 linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%),
                 linear-gradient(45deg, rgba(120, 119, 198, 0.1) 0%, rgba(255, 119, 198, 0.1) 100%);
             color: #ffffff;
-            font-size: 18px;
-            font-weight: 500;
-            text-align: center;
-            letter-spacing: 2px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            transform-style: preserve-3d;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            caret-color: #78c1ff;
+            padding: 0;
         }
 
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+        .otp-inputs input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
             font-weight: 300;
-            letter-spacing: 1px;
         }
 
-        input:focus {
+        .otp-inputs input:focus {
             outline: none;
+            border-color: rgba(120, 219, 255, 0.7);
             background:
-                linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%),
                 linear-gradient(45deg, rgba(120, 119, 198, 0.2) 0%, rgba(255, 119, 198, 0.2) 100%);
-            border-color: rgba(120, 219, 255, 0.5);
             box-shadow:
-                0 0 20px rgba(120, 219, 255, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-            letter-spacing: 3px;
+                0 0 25px rgba(120, 219, 255, 0.25),
+                0 0 50px rgba(120, 119, 198, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px) scale(1.08);
         }
 
-        input:focus::placeholder {
-            color: rgba(255, 255, 255, 0.8);
+        .otp-inputs input.filled {
+            border-color: rgba(74, 222, 128, 0.5);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.15);
+        }
+
+        .otp-inputs input.shake {
+            animation: inputShake 0.4s ease-in-out;
+        }
+
+        @keyframes inputShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        .otp-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 8px;
+            font-weight: 400;
         }
 
         .button-group {
@@ -523,39 +556,11 @@
     <div class="card">
 
         <div style="text-align: center; margin-bottom: 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="160" height="48"
-                style="display: block; margin: 0 auto;">
-                <defs>
-                    <linearGradient id="logoGradientOTP" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#ff77c9;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#78c1ff;stop-opacity:1" />
-                    </linearGradient>
-                    <linearGradient id="iconGradientOTP" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#ff77c9;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#78c1ff;stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-                <g>
-                    <circle cx="25" cy="30" r="8" fill="url(#iconGradientOTP)" opacity="0.9" />
-                    <circle cx="10" cy="15" r="6" fill="url(#iconGradientOTP)" opacity="0.8" />
-                    <circle cx="40" cy="15" r="6" fill="url(#iconGradientOTP)" opacity="0.8" />
-                    <circle cx="10" cy="45" r="6" fill="url(#iconGradientOTP)" opacity="0.8" />
-                    <circle cx="40" cy="45" r="6" fill="url(#iconGradientOTP)" opacity="0.8" />
-                    <line x1="25" y1="30" x2="10" y2="15" stroke="url(#iconGradientOTP)" stroke-width="2"
-                        opacity="0.6" />
-                    <line x1="25" y1="30" x2="40" y2="15" stroke="url(#iconGradientOTP)" stroke-width="2"
-                        opacity="0.6" />
-                    <line x1="25" y1="30" x2="10" y2="45" stroke="url(#iconGradientOTP)" stroke-width="2"
-                        opacity="0.6" />
-                    <line x1="25" y1="30" x2="40" y2="45" stroke="url(#iconGradientOTP)" stroke-width="2"
-                        opacity="0.6" />
-                    <path d="M 45 30 L 50 25 L 50 30 L 50 35 Z" fill="url(#iconGradientOTP)" opacity="0.9" />
-                </g>
-                <text x="60" y="25" font-family="'Inter', sans-serif" font-size="20" font-weight="bold"
-                    fill="url(#logoGradientOTP)">TeamNext</text>
-                <text x="60" y="45" font-family="'Inter', sans-serif" font-size="8" font-weight="600" fill="#78c1ff"
-                    opacity="0.8">Enterprise Management Tool</text>
-            </svg>
+            <div
+                style="display:inline-block; background:rgba(255,255,255,0.95); border-radius:14px; padding:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+                <img src="{% static 'myapp/images/teamnext_logo.png' %}" alt="TeamNext ERP"
+                    style="width:140px; height:auto; display:block;">
+            </div>
         </div>
 
         <h2>Verify OTP</h2>
@@ -578,10 +583,17 @@
             <div id="timer">02:00</div>
         </div>
 
+        <p class="otp-subtitle">Enter 4-digit verification code</p>
         <form id="verify-form" method="POST" action="{% url 'verify_otp' %}">
             {% csrf_token %}
-            <input type="text" name="otp" maxlength="6" required placeholder="000000" pattern="[0-9]{6}"
-                title="Enter 6-digit OTP">
+            <input type="hidden" name="otp" id="otpHidden">
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-box" id="otp1"
+                    autocomplete="one-time-code" autofocus>
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-box" id="otp2">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-box" id="otp3">
+                <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="otp-box" id="otp4">
+            </div>
         </form>
 
         <div class="button-group">
@@ -599,8 +611,11 @@
         let expiryTime = {{ expiry_timestamp }} * 1000;
         let timer = document.getElementById("timer");
         let resendBtn = document.getElementById("resendBtn");
-        let verifyForm = document.querySelector('form[action*="verify"]');
+        let verifyForm = document.getElementById('verify-form');
+        let otpHidden = document.getElementById('otpHidden');
+        const otpBoxes = document.querySelectorAll('.otp-box');
 
+        // Timer countdown
         const interval = setInterval(() => {
             let timeLeft = Math.floor((expiryTime - Date.now()) / 1000);
 
@@ -616,26 +631,82 @@
 
             let m = Math.floor(timeLeft / 60);
             let s = timeLeft % 60;
-
             timer.innerText = m.toString().padStart(2, '0') + ":" + s.toString().padStart(2, '0');
         }, 1000);
 
+        // Collect all OTP values into hidden field
+        function updateHiddenOTP() {
+            let otp = '';
+            otpBoxes.forEach(b => otp += b.value);
+            otpHidden.value = otp;
+            return otp;
+        }
 
-        document.querySelector('input[name="otp"]').addEventListener('input', function (e) {
-            if (this.value.length === 6) {
+        // OTP box logic: auto-focus, backspace, paste, auto-submit
+        otpBoxes.forEach((box, idx) => {
+            box.addEventListener('input', (e) => {
+                const val = e.target.value.replace(/[^0-9]/g, '');
+                e.target.value = val.slice(0, 1);
 
-                this.style.borderColor = 'rgba(74, 222, 128, 0.5)';
-                this.style.boxShadow = '0 0 20px rgba(74, 222, 128, 0.2)';
+                if (val && idx < otpBoxes.length - 1) {
+                    otpBoxes[idx + 1].focus();
+                }
 
+                // Toggle filled class
+                e.target.classList.toggle('filled', !!e.target.value);
 
-                setTimeout(() => {
-                    verifyForm.submit();
-                }, 500);
-            } else {
-                this.style.borderColor = 'rgba(255,255,255,0.1)';
-                this.style.boxShadow = 'none';
-            }
+                const fullOtp = updateHiddenOTP();
+                if (fullOtp.length === 4) {
+                    // All 4 digits entered – flash green and auto-submit
+                    otpBoxes.forEach(b => {
+                        b.style.borderColor = 'rgba(74, 222, 128, 0.7)';
+                        b.style.boxShadow = '0 0 25px rgba(74, 222, 128, 0.3)';
+                    });
+                    setTimeout(() => verifyForm.submit(), 500);
+                }
+            });
+
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                    otpBoxes[idx - 1].focus();
+                    otpBoxes[idx - 1].value = '';
+                    otpBoxes[idx - 1].classList.remove('filled');
+                    updateHiddenOTP();
+                }
+            });
+
+            // Handle paste – spread digits across boxes
+            box.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasted = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 4);
+                pasted.split('').forEach((digit, i) => {
+                    if (otpBoxes[i]) {
+                        otpBoxes[i].value = digit;
+                        otpBoxes[i].classList.add('filled');
+                    }
+                });
+                const nextIdx = Math.min(pasted.length, otpBoxes.length - 1);
+                otpBoxes[nextIdx].focus();
+                const fullOtp = updateHiddenOTP();
+                if (fullOtp.length === 4) {
+                    otpBoxes.forEach(b => {
+                        b.style.borderColor = 'rgba(74, 222, 128, 0.7)';
+                        b.style.boxShadow = '0 0 25px rgba(74, 222, 128, 0.3)';
+                    });
+                    setTimeout(() => verifyForm.submit(), 500);
+                }
+            });
+
+            // Only allow numbers
+            box.addEventListener('keypress', (e) => {
+                if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab') {
+                    e.preventDefault();
+                }
+            });
         });
+
+        // Ensure hidden field is updated on form submit
+        verifyForm.addEventListener('submit', () => updateHiddenOTP());
     </script>
 
 </body>
