@@ -103,7 +103,7 @@ STATICFILES_DIRS = []
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://*.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://*.onrender.com', 'https://*.teamnexterp.com', 'https://teamnexterp.com']
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -118,3 +118,33 @@ if 'EMAIL_HOST' in os.environ:
 else:
     # Outputs emails to the console for local development
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Show errors in terminal when DEBUG=False
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
