@@ -356,6 +356,8 @@ def verify_otp(request):
         return redirect("otp")
 
 def resend_otp(request):
+    if request.method != "POST":
+        return redirect("otp")
 
     email = request.session.get("otp_email")
 
