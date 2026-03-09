@@ -1220,17 +1220,11 @@ def send_dashboard_email(request):
         try:
 
             send_mail(
-
                 subject,
-
                 body,
-
-                settings.EMAIL_HOST_USER,
-
+                settings.DEFAULT_FROM_EMAIL,
                 [to],
-
                 fail_silently=True
-
             )
 
         except Exception:
@@ -1261,77 +1255,7 @@ def send_dashboard_email(request):
 
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
-@csrf_exempt
-
-def create_ticket(request):
-
-    if request.method != "POST":
-
-        return HttpResponseBadRequest("Invalid method")
-
-    try:
-
-        import json
-
-        payload = json.loads(request.body.decode("utf-8"))
-
-        title = payload.get("title")
-
-        description = payload.get("description")
-
-        project_id = payload.get("project_id")
-
-        priority = payload.get("priority") or "medium"
-
-        assignee_email = payload.get("assignee")
-
-        if not title or not description or not project_id:
-
-            return JsonResponse({"status": "error", "message": "Missing fields"}, status=400)
-
-        try:
-
-            proj = Project.objects.get(id=project_id) if str(project_id).isdigit() else Project.objects.filter(name__icontains=project_id).first()
-
-            if not proj:
-
-                email = request.session.get('otp_email')
-
-                co = Company.objects.filter(email=email).first() or Company.objects.first()
-
-                proj = Project.objects.create(name=project_id, company=co)
-
-        except Exception:
-
-             return JsonResponse({"status": "error", "message": "Project conflict"}, status=400)
-
-        t = Ticket.objects.create(
-
-            project=proj,
-
-            title=title,
-
-            description=description,
-
-            priority=priority.lower()
-
-        )
-
-        if assignee_email:
-
-            emp = Employee.objects.filter(email=assignee_email).first()
-
-            if emp:
-
-                t.employee = emp
-
-                t.save()
-
-        return JsonResponse({"status": "success", "ticket": {"id": t.id, "title": t.title}})
-
-    except Exception as e:
-
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+# Duplicate create_ticket view removed (using definition at the end of file)
 
 def tickets_page(request):
 
@@ -1460,15 +1384,10 @@ def add_developer(request):
     try:
 
         send_mail(
-
             "Developer Verification OTP - TeamNext",
-
             f"Hello,\n\nA developer '{name}' ({email}) is being added to your workspace.\nThe verification OTP is: {otp}\nIt expires in 5 minutes.",
-
-            settings.EMAIL_HOST_USER,
-
+            settings.DEFAULT_FROM_EMAIL,
             recipient,
-
             fail_silently=True,
             html_message=f"""
             <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>

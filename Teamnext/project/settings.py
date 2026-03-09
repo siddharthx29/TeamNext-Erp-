@@ -104,7 +104,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Use CompressedStaticFilesStorage instead of Manifest version to avoid crashes if manifest is missing on Render
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -114,15 +115,20 @@ CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://*.onrender.com', 'http
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp-relay.brevo.com")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+# Defensive parsing of EMAIL_PORT
+try:
+    EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587") or "587")
+except (ValueError, TypeError):
+    EMAIL_PORT = 587
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
 EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() == "true"
 
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+# Ensure DEFAULT_FROM_EMAIL is always a valid string format to avoid SMTP errors
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL") or EMAIL_HOST_USER or 'otp@teamnexterp.com'
 
 # Show errors in terminal when DEBUG=False
 LOGGING = {
