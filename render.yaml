@@ -2,11 +2,13 @@ databases:
   - name: teamnext-db
     databaseName: teamnext
     user: teamnext
+    plan: free
 
 services:
   - type: web
     name: teamnext-app
     env: python
+    plan: free
     rootDir: Teamnext
     buildCommand: "bash ./build.sh"
     startCommand: "gunicorn project.wsgi:application"
