@@ -106,6 +106,10 @@
   <div class="container">
     <div class="header">
       <div style="display: flex; align-items: center; gap: 16px;">
+        <a href="/dashboard/" style="text-decoration: none;">
+          <img src="{% static 'myapp/images/teamnext_logo.png' %}" alt="TeamNext ERP"
+            style="height:50px; width:auto; vertical-align: middle;">
+        </a>
         <button class="back-btn" onclick="window.history.back()" title="Go back to previous page">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -218,7 +222,8 @@
           <div style="margin-top:8px"><textarea id="tDesc" rows="6" placeholder="Describe the issue"></textarea></div>
 
           <div style="margin-top:8px">
-            <label for="assigneeSel" style="display:block; margin-bottom:6px; font-size:13px; color:#cbd5e1">Assign to Employee</label>
+            <label for="assigneeSel" style="display:block; margin-bottom:6px; font-size:13px; color:#cbd5e1">Assign to
+              Employee</label>
             <select id="assigneeSel" style="width:100%">
               <option value="">Unassigned</option>
               {% for dev in developers %}
@@ -238,12 +243,14 @@
           <h3>Recent Tickets</h3>
           {% if recent %}
           {% for t in recent %}
-          <div class="ticket-item" style="border-left: 4px solid {% if t.priority == 'high' %}#f87171{% elif t.priority == 'medium' %}#fbbf24{% else %}#93c5fd{% endif %}; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s">
+          <div class="ticket-item"
+            style="border-left: 4px solid {% if t.priority == 'high' %}#f87171{% elif t.priority == 'medium' %}#fbbf24{% else %}#93c5fd{% endif %}; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
               <div style="flex:1">
                 <strong style="font-size:14px;color:#e2e8f0">{{ t.title }}</strong>
               </div>
-              <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:{% if t.priority == 'high' %}rgba(248,113,113,0.2);color:#f87171{% elif t.priority == 'medium' %}rgba(251,191,36,0.2);color:#fbbf24{% else %}rgba(147,197,253,0.2);color:#93c5fd{% endif %}">
+              <span
+                style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:{% if t.priority == 'high' %}rgba(248,113,113,0.2);color:#f87171{% elif t.priority == 'medium' %}rgba(251,191,36,0.2);color:#fbbf24{% else %}rgba(147,197,253,0.2);color:#93c5fd{% endif %}">
                 {{ t.priority|upper }}
               </span>
             </div>
@@ -291,18 +298,18 @@
           const first = sel.options[0];
           sel.innerHTML = '';
           if (first) sel.appendChild(first);
-          
+
           data.developers.forEach(d => {
             const opt = document.createElement('option');
             opt.value = d.email;
             opt.textContent = d.name;
             sel.appendChild(opt);
           });
-          
+
           if (selectedValue) sel.value = selectedValue;
         }
-      } catch (e) { 
-        console.error('Error loading employees:', e); 
+      } catch (e) {
+        console.error('Error loading employees:', e);
       }
     }
 

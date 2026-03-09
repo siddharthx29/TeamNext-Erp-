@@ -208,7 +208,13 @@
 <body>
 	<div class="panel">
 		<div class="header">
-			<h2>Departments & Projects</h2>
+			<div style="display: flex; align-items: center; gap: 16px;">
+				<a href="/dashboard/" style="text-decoration: none;">
+					<img src="{% static 'myapp/images/teamnext_logo.png' %}" alt="TeamNext ERP"
+						style="height:50px; width:auto; vertical-align: middle;">
+				</a>
+				<h2 style="margin: 0;">Departments & Projects</h2>
+			</div>
 			<div class="user-menu" style="display:flex; align-items:center; gap:12px; cursor:pointer; position:relative"
 				onclick="toggleUserMenu(event)">
 				<div style="text-align:right">

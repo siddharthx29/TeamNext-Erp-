@@ -112,7 +112,7 @@
 			top: 0;
 			left: 0;
 			width: 100%;
-			height: 4px;        
+			height: 4px;
 			background: var(--primary);
 			opacity: 0.5;
 		}
@@ -266,9 +266,15 @@
 	<div class="dashboard-container">
 		<!-- Header -->
 		<header class="header">
-			<div>
-				<h1>Executive Analytics</h1>
-				<p style="font-size: 0.8rem; color: #94a3b8;">Real-time intelligence for {{ company_name }}</p>
+			<div style="display: flex; align-items: center; gap: 16px;">
+				<a href="/dashboard/" style="text-decoration: none;">
+					<img src="{% static 'myapp/images/teamnext_logo.png' %}" alt="TeamNext ERP"
+						style="height:50px; width:auto; vertical-align: middle;">
+				</a>
+				<div>
+					<h1>Executive Analytics</h1>
+					<p style="font-size: 0.8rem; color: #94a3b8;">Real-time intelligence for {{ company_name }}</p>
+				</div>
 			</div>
 			<div class="user-menu" onclick="toggleUserMenu(event)">
 				<div style="text-align: right; margin-right: 10px;">

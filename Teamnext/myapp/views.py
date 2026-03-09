@@ -66,35 +66,33 @@ def send_otp(request):
 
     if request.method == "POST":
 
-        email = request.POST.get("email")
-
+        email_input = request.POST.get("email")
         purpose = request.POST.get("purpose")
+        email_input = (email_input or '').strip().lower()
 
-        email = (email or '').strip().lower()
-
-        if purpose in ('login', 'password_reset'):
-
-            user_exists = Company.objects.filter(email=email).exists() or Employee.objects.filter(email=email).exists()
-
-            if not user_exists:
-
-                messages.error(request, f'Email {email} is not registered.')
-
-                return redirect('login')
-
-        if not email:
-
+        if not email_input:
             messages.error(request, "Enter valid email")
-
             return redirect("login")
 
+        # Support multiple emails separated by comma
+        email_list = [e.strip() for e in email_input.split(',') if e.strip()]
+        
+        # We check if at least one email exists in the system if it's for login
+        if purpose in ('login', 'password_reset'):
+            exists = False
+            for email in email_list:
+                if Company.objects.filter(email=email).exists() or Employee.objects.filter(email=email).exists():
+                    exists = True
+                    break
+            
+            if not exists:
+                messages.error(request, f'None of these emails are registered.')
+                return redirect('login')
+
         otp = str(random.randint(1000, 9999))
-
         request.session["otp"] = otp
-
-        request.session["otp_email"] = email
-
-        request.session["otp_expiry"] = time.time() + 120
+        request.session["otp_email"] = email_list[0] if email_list else email_input
+        request.session["otp_expiry"] = time.time() + 300 # Increased to 5 mins
 
         if purpose:
 
@@ -106,44 +104,30 @@ def send_otp(request):
 
         request.session["resend_count"] = 0
 
-        send_mail(
-
-            "Your OTP Code - TeamNext Enterprise Management Tool",
-
-            f"""
-Hello,
-
-Your OTP for TeamNext Enterprise Management Tool login is: {otp}
-
-This OTP will expire in 2 minutes.
-
-If you didn't request this OTP, please ignore this email.
-
-Best regards,
-TeamNext Enterprise Management Tool Team
-            """,
-
-            settings.EMAIL_HOST_USER,
-
-            [email],
-
-            fail_silently=False,
-            html_message=f"""
-            <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
-                <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
-                <p style='color: #374151; font-size: 16px;'>Hello,</p>
-                <p style='color: #374151; font-size: 16px;'>We received a request for an account verification or login. Your OTP verification code is:</p>
-                <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
-                    <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
+        try:
+            send_mail(
+                "Your OTP Code - TeamNext ERP",
+                f"Hello,\n\nYour OTP is: {otp}\n\nThis code will expire in 2 minutes.",
+                settings.EMAIL_HOST_USER,
+                email_list,
+                fail_silently=False,
+                html_message=f"""
+                <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
+                    <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
+                    <p style='color: #374151; font-size: 16px;'>Hello,</p>
+                    <p style='color: #374151; font-size: 16px;'>Your OTP verification code is:</p>
+                    <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
+                        <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
+                    </div>
+                    <p style='color: #4b5563; font-size: 14px;'>This code will expire in 2 minutes.</p>
                 </div>
-                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
-                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
-            </div>
-            """
-
-        )
-
-        messages.success(request, f"OTP sent to {email}")
+                """
+            )
+            messages.success(request, f"OTP sent to {', '.join(email_list)}")
+            request.session["otp_email"] = email_list[0] # Store primary email for session
+        except Exception as e:
+            messages.error(request, f"Failed to send email: {str(e)}")
+            return redirect('login')
 
         return redirect("otp")
 

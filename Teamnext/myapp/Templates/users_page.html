@@ -30,7 +30,13 @@
 	<div class="panel">
 		<div
 			style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.05)">
-			<h2>Users — {{ company_name }}</h2>
+			<div style="display: flex; align-items: center; gap: 16px;">
+				<a href="/dashboard/" style="text-decoration: none;">
+					<img src="{% static 'myapp/images/teamnext_logo.png' %}" alt="TeamNext ERP"
+						style="height:48px; width:auto; vertical-align: middle;">
+				</a>
+				<h2 style="margin: 0;">Users — {{ company_name }}</h2>
+			</div>
 			<div class="user-menu" style="display:flex; align-items:center; gap:12px; cursor:pointer; position:relative"
 				onclick="toggleUserMenu(event)">
 				<div style="text-align:right">
