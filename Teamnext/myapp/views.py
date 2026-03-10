@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect
 
 from django.contrib import messages
 
-from django.core.mail import send_mail
 from django.conf import settings
 
 from django.http import JsonResponse, HttpResponseBadRequest
@@ -19,6 +18,7 @@ from django.db.models import Sum, Count, Avg, F
 from django.utils import timezone
 from datetime import timedelta, datetime
 
+from .brevo_helper import send_brevo_email
 from .models import (
     Company, Employee, Project, ProjectMember, Ticket, ChatMessage, 
     EmailMessage, LeaveRequest, SocialItem, Department,
@@ -105,13 +105,7 @@ def send_otp(request):
         request.session["resend_count"] = 0
 
         try:
-            send_mail(
-                "Your OTP Code - TeamNext ERP",
-                f"Hello,\n\nYour OTP is: {otp}\n\nThis code will expire in 5 minutes.",
-                settings.DEFAULT_FROM_EMAIL,
-                email_list,
-                fail_silently=False,
-                html_message=f"""
+            html = f"""
                 <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
                     <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
                     <p style='color: #374151; font-size: 16px;'>Hello,</p>
@@ -121,12 +115,17 @@ def send_otp(request):
                     </div>
                     <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes.</p>
                 </div>
-                """
+            """
+            send_brevo_email(
+                to_emails=email_list,
+                subject="Your OTP Code - TeamNext ERP",
+                html_content=html,
+                plain_text=f"Hello,\n\nYour OTP is: {otp}\n\nThis code will expire in 5 minutes."
             )
             messages.success(request, f"OTP sent to {', '.join(email_list)}")
-            request.session["otp_email"] = email_list[0] # Store primary email for session
+            request.session["otp_email"] = email_list[0]
         except Exception as e:
-            print(f"CRITICAL EMAIL ERROR: {str(e)}") # This will show in Render Logs
+            print(f"CRITICAL EMAIL ERROR: {str(e)}")
             messages.error(request, f"Failed to send email: {str(e)}")
             return redirect('login')
         request.session.save()
@@ -208,24 +207,22 @@ def api_send_otp_json(request):
 
             recipients = [email]
 
-        send_mail(
-            "Verify Your Account - TeamNext Enterprise Management Tool",
-            msg,
-            settings.DEFAULT_FROM_EMAIL,
-            recipients,
-            fail_silently=False, 
-            html_message=f"""
+        html = f"""
             <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
                 <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
                 <p style='color: #374151; font-size: 16px;'>Hello,</p>
-                <p style='color: #374151; font-size: 16px;'>We received a request for an account verification or login. Your OTP verification code is:</p>
+                <p style='color: #374151; font-size: 16px;'>Your OTP verification code is:</p>
                 <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
                     <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
                 </div>
-                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
-                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes.</p>
             </div>
-            """
+        """
+        send_brevo_email(
+            to_emails=recipients,
+            subject="Verify Your Account - TeamNext Enterprise Management Tool",
+            html_content=html,
+            plain_text=msg
         )
 
         return JsonResponse({'status': 'ok'})
@@ -324,24 +321,21 @@ def verify_otp(request):
             request.session["resend_count"] = count + 1
 
             try:
-                send_mail(
-                    "New OTP Code - TeamNext Enterprise Management Tool",
-                    f"Hello,\n\nYour previous OTP was incorrect. Your new OTP is: {new_otp}\n\nThis OTP will expire in 5 minutes.",
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
-                    html_message=f"""
+                html_retry = f"""
                     <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
                         <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
-                        <p style='color: #374151; font-size: 16px;'>Hello,</p>
-                        <p style='color: #374151; font-size: 16px;'>Your previous code was incorrect. Here is your new verification code:</p>
+                        <p style='color: #374151; font-size: 16px;'>Your previous code was incorrect. New code:</p>
                         <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
                             <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{new_otp}</strong>
                         </div>
-                        <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
-                        <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+                        <p style='color: #4b5563; font-size: 14px;'>Expires in 5 minutes.</p>
                     </div>
-                    """
+                """
+                send_brevo_email(
+                    to_emails=[email],
+                    subject="New OTP Code - TeamNext Enterprise Management Tool",
+                    html_content=html_retry,
+                    plain_text=f"Your new OTP is: {new_otp}. Expires in 5 minutes."
                 )
                 messages.error(request, f"Invalid OTP. A new code has been sent to {email}.")
             except Exception:
@@ -382,44 +376,28 @@ def resend_otp(request):
 
     request.session["resend_count"] = count + 1
 
-    send_mail(
-
-        "New OTP Code - TeamNext Enterprise Management Tool",
-
-        f"""
-Hello,
-
-Your new OTP for TeamNext Enterprise Management Tool login is: {otp}
-
-This OTP will expire in 5 minutes.
-
-If you didn't request this OTP, please ignore this email.
-
-Best regards,
-TeamNext Enterprise Management Tool Team
-        """,
-
-        settings.DEFAULT_FROM_EMAIL,
-
-        [email],
-
-        fail_silently=False,
-            html_message=f"""
+    try:
+        html = f"""
             <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
                 <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
                 <p style='color: #374151; font-size: 16px;'>Hello,</p>
-                <p style='color: #374151; font-size: 16px;'>We received a request for an account verification or login. Your OTP verification code is:</p>
+                <p style='color: #374151; font-size: 16px;'>Your new OTP verification code is:</p>
                 <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
                     <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
                 </div>
-                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
-                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes.</p>
             </div>
-            """
-
-    )
-
-    messages.success(request, f"New OTP sent to {email} ({count+1}/3)")
+        """
+        send_brevo_email(
+            to_emails=[email],
+            subject="New OTP Code - TeamNext Enterprise Management Tool",
+            html_content=html,
+            plain_text=f"Hello,\n\nYour new OTP is: {otp}\n\nExpires in 5 minutes."
+        )
+        messages.success(request, f"New OTP sent to {email} ({count+1}/3)")
+    except Exception as e:
+        print(f"RESEND OTP ERROR: {str(e)}")
+        messages.error(request, f"Failed to resend OTP: {str(e)}")
 
     return redirect("otp")
 
@@ -613,32 +591,22 @@ def _send_signup_otp(request, email):
 
     request.session["otp_action"] = 'signup'
 
-    send_mail(
-
-        "Verify Your Account - TeamNext Enterprise Management Tool",
-
-        f"Hello,\n\nYour OTP for account verification is: {otp}\n\nExpires in 5 minutes.",
-
-        settings.DEFAULT_FROM_EMAIL,
-
-        [email],
-
-        fail_silently=False,
-            html_message=f"""
-            <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
-                <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
-                <p style='color: #374151; font-size: 16px;'>Hello,</p>
-                <p style='color: #374151; font-size: 16px;'>We received a request for an account verification or login. Your OTP verification code is:</p>
-                <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
-                    <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
-                </div>
-                <p style='color: #4b5563; font-size: 14px;'>This code will expire in 5 minutes. If you did not request this, please safely ignore this email.</p>
-                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+    html_signup = f"""
+        <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
+            <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Enterprise Validation</h2>
+            <p style='color: #374151; font-size: 16px;'>Your account verification OTP is:</p>
+            <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
+                <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
             </div>
-            """
-
+            <p style='color: #4b5563; font-size: 14px;'>Expires in 5 minutes.</p>
+        </div>
+    """
+    send_brevo_email(
+        to_emails=[email],
+        subject="Verify Your Account - TeamNext Enterprise Management Tool",
+        html_content=html_signup,
+        plain_text=f"Hello,\n\nYour OTP for account verification is: {otp}\n\nExpires in 5 minutes."
     )
-
     messages.success(request, f"Verification OTP sent to {email}")
 
 def set_password(request):
@@ -1217,18 +1185,9 @@ def send_dashboard_email(request):
             return JsonResponse({"status": "error", "message": "Missing fields"}, status=400)
 
         try:
-
-            send_mail(
-                subject,
-                body,
-                settings.DEFAULT_FROM_EMAIL,
-                [to],
-                fail_silently=False  # Catch errors to prevent silent backend failure
-            )
-
-        except Exception:
-
-            pass
+            send_brevo_email(to_emails=[to], subject=subject, html_content=f"<p>{body}</p>", plain_text=body)
+        except Exception as e:
+            print(f"send_dashboard_email error: {e}")
 
         sent = request.session.get('sent_emails', [])
 
@@ -1381,29 +1340,20 @@ def add_developer(request):
     recipient = [company_email] if company_email else [sender_email]
 
     try:
-
-        send_mail(
-            "Developer Verification OTP - TeamNext",
-            f"Hello,\n\nA developer '{name}' ({email}) is being added to your workspace.\nThe verification OTP is: {otp}\nIt expires in 5 minutes.",
-            settings.DEFAULT_FROM_EMAIL,
-            recipient,
-            fail_silently=True,
-            html_message=f"""
-            <div style='font-family: Arial, sans-serif; padding: 30px; border-radius: 8px; background-color: #f9fafb; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb;'>
-                <h2 style='color: #2563eb; margin-top: 0; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;'>TeamNext Developer Access</h2>
-                <p style='color: #374151; font-size: 16px;'>Hello,</p>
-                <p style='color: #374151; font-size: 16px;'>A developer '<b>{name}</b>' ({email}) is being added to your workspace. The verification OTP is:</p>
-                <div style='background-color: #eff6ff; padding: 15px; border-radius: 6px; text-align: center; margin: 25px 0; border: 1px dashed #93c5fd;'>
-                    <strong style='color: #1d4ed8; font-size: 32px; letter-spacing: 4px;'>{otp}</strong>
-                </div>
-                <p style='color: #4b5563; font-size: 14px;'>It expires in 5 minutes.</p>
-                <p style='color: #9ca3af; font-size: 12px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;'>Securely sent by TeamNext Enterprise Management Tool.</p>
+        html_dev = f"""
+            <div style='font-family: Arial, sans-serif; padding: 20px;'>
+                <h2>TeamNext Developer Access</h2>
+                <p>Developer <b>{name}</b> ({email}) is being added. OTP: <strong>{otp}</strong></p>
+                <p>Expires in 5 minutes.</p>
             </div>
-            """
+        """
+        send_brevo_email(
+            to_emails=recipient,
+            subject="Developer Verification OTP - TeamNext",
+            html_content=html_dev,
+            plain_text=f"Developer '{name}' ({email}) OTP: {otp}. Expires in 5 minutes."
         )
-
     except Exception:
-
         pass
 
     return JsonResponse({"status": "ok", "message": "OTP sent to company email for verification."})
@@ -1943,134 +1893,32 @@ def email_page(request):
     })
 
 @csrf_exempt
-
 def api_fetch_emails(request):
-
+    # NOTE: IMAP fetching is disabled on Render (outbound TCP connections are blocked on the free plan).
+    # Emails sent via the platform are stored in the database and returned here instead.
     if not request.session.get("verified"):
-
         return JsonResponse({"status": "error", "message": "Unauthorized"}, status=403)
 
-    real_emails = []
-
     try:
+        email_addr = request.session.get('otp_email')
+        inbox = EmailMessage.objects.filter(
+            recipient_email=email_addr, is_draft=False, is_sent=True
+        ).order_by('-timestamp')[:20]
 
-        import imaplib
-
-        import email
-
-        from email.header import decode_header
-
-        from django.conf import settings
-
-        email_user = settings.EMAIL_HOST_USER
-
-        email_pass = settings.EMAIL_HOST_PASSWORD
-
-        domain = email_user.split('@')[-1].lower() if '@' in email_user else ''
-
-        imap_map = {
-
-            'gmail.com': 'imap.gmail.com',
-
-            'yahoo.com': 'imap.mail.yahoo.com',
-
-            'outlook.com': 'outlook.office365.com',
-
-            'hotmail.com': 'outlook.office365.com',
-
-            'zoho.com': 'imap.zoho.com',
-
-        }
-
-        imap_host = imap_map.get(domain, f'imap.{domain}')
-
-        mail = imaplib.IMAP4_SSL(imap_host)
-
-        mail.login(email_user, email_pass)
-
-        mail.select("inbox")
-
-        status, messages_ids = mail.search(None, "ALL")
-
-        if status == "OK":
-
-            id_list = messages_ids[0].split()
-
-            latest_ids = id_list[-10:]
-
-            latest_ids.reverse()
-
-            for mail_id in latest_ids:
-
-                try:
-
-                     _, msg_data = mail.fetch(mail_id, "(RFC822)")
-
-                     for response_part in msg_data:
-
-                         if isinstance(response_part, tuple):
-
-                             msg = email.message_from_bytes(response_part[1])
-
-                             subject, encoding = decode_header(msg["Subject"])[0]
-
-                             if isinstance(subject, bytes):
-
-                                 subject = subject.decode(encoding or "utf-8", errors="ignore")
-
-                             frm, encoding = decode_header(msg.get("From"))[0]
-
-                             if isinstance(frm, bytes):
-
-                                 frm = frm.decode(encoding or "utf-8", errors="ignore")
-
-                             body = ""
-
-                             if msg.is_multipart():
-
-                                 for part in msg.walk():
-
-                                     if part.get_content_type() == "text/plain":
-
-                                         payload = part.get_payload(decode=True)
-
-                                         if payload: body = payload.decode(errors="ignore")
-
-                                         break
-
-                             else:
-
-                                 payload = msg.get_payload(decode=True)
-
-                                 if payload: body = payload.decode(errors="ignore")
-
-                             if "otp" in subject.lower() or "otp" in body.lower():
-
-                                 continue
-
-                             real_emails.append({
-
-                                 "from": frm,
-
-                                 "subject": subject,
-
-                                 "body": body,
-
-                                 "time": 0
-
-                             })
-
-                except Exception:
-
-                    continue
-
-        mail.logout()
+        real_emails = [
+            {
+                'from': e.sender_email,
+                'subject': e.subject,
+                'body': e.body,
+                'time': int(e.timestamp.timestamp()) if e.timestamp else 0
+            }
+            for e in inbox
+        ]
+        return JsonResponse({'status': 'ok', 'emails': real_emails})
 
     except Exception as e:
-
-        pass
-
-    return JsonResponse({'status': 'ok', 'emails': real_emails})
+        print(f"api_fetch_emails error: {e}")
+        return JsonResponse({'status': 'ok', 'emails': []})
 
 def projects_page(request):
 

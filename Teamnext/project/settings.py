@@ -7,14 +7,16 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
-# Load variables from .env file into environment
+# Load variables from .env file into environment (local dev only)
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-temp-key-change-this')
 
-DEBUG = os.environ.get('DEBUG', 'False') != 'False'
+# Reads DEBUG from environment — set to "False" on Render, "True" locally
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
@@ -110,7 +112,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Use CompressedStaticFilesStorage instead of Manifest version to avoid crashes if manifest is missing on Render
+# Use CompressedStaticFilesStorage to avoid crashes if manifest is missing on Render
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -121,33 +123,37 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com"
 ]
 
-# Email Settings
+# ============================================================
+# Email Settings — all values read from environment variables
+# ============================================================
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp-relay.brevo.com")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False") == "True"
 EMAIL_TIMEOUT = 30
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL") or EMAIL_HOST_USER
 
-# Session settings for better reliability on Render
+# ============================================================
+# Session settings for reliability on Render
+# ============================================================
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# Show errors in terminal when DEBUG=False
+# ============================================================
+# Logging — prints ALL errors including email errors to Render logs
+# ============================================================
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
             'style': '{',
         },
     },
@@ -157,16 +163,50 @@ LOGGING = {
             'formatter': 'verbose',
         },
     },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'ERROR',
-            'propagate': True,
+            'level': 'INFO',
+            'propagate': False,
         },
         'django.request': {
             'handlers': ['console'],
             'level': 'ERROR',
             'propagate': False,
         },
+        'django.security': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        # This will log ALL email errors to Render logs
+        'django.core.mail': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # This logs your app's print() and errors
+        'myapp': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     },
 }
+
+# ============================================================
+# Startup email config check — prints to Render logs on boot
+# ============================================================
+import sys
+print("=== EMAIL CONFIG CHECK ===", file=sys.stderr)
+print(f"EMAIL_HOST: {EMAIL_HOST}", file=sys.stderr)
+print(f"EMAIL_PORT: {EMAIL_PORT}", file=sys.stderr)
+print(f"EMAIL_HOST_USER: {EMAIL_HOST_USER}", file=sys.stderr)
+print(f"EMAIL_HOST_PASSWORD set: {'YES' if EMAIL_HOST_PASSWORD else 'NO - THIS IS THE PROBLEM'}", file=sys.stderr)
+print(f"EMAIL_USE_TLS: {EMAIL_USE_TLS}", file=sys.stderr)
+print(f"DEFAULT_FROM_EMAIL: {DEFAULT_FROM_EMAIL}", file=sys.stderr)
+print("==========================", file=sys.stderr)
