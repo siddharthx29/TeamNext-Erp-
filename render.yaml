@@ -23,3 +23,17 @@ services:
         value: 4
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: EMAIL_HOST
+        value: smtp-relay.brevo.com
+      - key: EMAIL_PORT
+        value: 587
+      - key: EMAIL_USE_TLS
+        value: "True"
+      - key: EMAIL_HOST_USER
+        value: a472fb001@smtp-brevo.com
+      - key: EMAIL_HOST_PASSWORD
+        value: Py2NaZjgJp6qGchE
+      - key: DEFAULT_FROM_EMAIL
+        value: otp@teamnexterp.com
+      - key: DEBUG
+        value: "False"
