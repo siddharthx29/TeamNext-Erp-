@@ -16,6 +16,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-temp-key-change-this'
 
 DEBUG = True
 ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
     "teamnexterp.com",
     "www.teamnexterp.com",
     ".onrender.com"
@@ -31,7 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',   # must exist
+    'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
 ]
@@ -137,6 +139,11 @@ EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() == "true"
 
 # Ensure DEFAULT_FROM_EMAIL is always a valid string format to avoid SMTP errors
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL") or EMAIL_HOST_USER or 'otp@teamnexterp.com'
+
+# Session settings for better reliability on Render
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Added timeout to prevent hanging on SMTP connection
 EMAIL_TIMEOUT = 10 

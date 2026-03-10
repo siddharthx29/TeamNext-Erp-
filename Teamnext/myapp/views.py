@@ -129,7 +129,7 @@ def send_otp(request):
             print(f"CRITICAL EMAIL ERROR: {str(e)}") # This will show in Render Logs
             messages.error(request, f"Failed to send email: {str(e)}")
             return redirect('login')
-
+        request.session.save()
         return redirect("otp")
 
     return render(request, "email.html")
@@ -247,9 +247,8 @@ def verify_otp(request):
     expiry = request.session.get("otp_expiry")
 
     if not saved_otp or not expiry:
-
-        messages.error(request, "Session expired. Please login again.")
-
+        print(f"DEBUG: verify_otp session check failed. saved_otp: {saved_otp}, expiry: {expiry}")
+        messages.error(request, "Session expired or invalid. Please login again.")
         return redirect("login")
 
     if time.time() > expiry:

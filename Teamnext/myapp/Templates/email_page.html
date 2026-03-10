@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html>
 
@@ -199,12 +200,11 @@
     </div>
 
     <div class="panel">
-      <div style="margin-bottom:12px"><input id="to" placeholder="To: recipient@example.com"
-          value="{{ draft.to|default:'' }}"></div>
-      <div style="margin-bottom:12px"><input id="subject" placeholder="Subject" value="{{ draft.subject|default:'' }}">
+      <div style="margin-bottom:12px"><input id="to" placeholder="To: recipient@example.com" value=""></div>
+      <div style="margin-bottom:12px"><input id="subject" placeholder="Subject" value="">
       </div>
-      <div style="margin-bottom:12px"><textarea id="body" rows="10"
-          placeholder="Write your email here...">{{ draft.body|default:'' }}</textarea></div>
+      <div style="margin-bottom:12px"><textarea id="body" rows="10" placeholder="Write your email here..."></textarea>
+      </div>
       <div style="display:flex;gap:10px">
         <button id="sendBtn">Send Email</button>
         <button id="saveBtn" style="background:rgba(255,255,255,0.1)">Save Draft</button>
