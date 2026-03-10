@@ -32,7 +32,7 @@ services:
       - key: EMAIL_HOST_USER
         value: a472fb001@smtp-brevo.com
       - key: EMAIL_HOST_PASSWORD
-        value: Py2NaZjgJp6qGchE
+        value: bsk8kPWiYPTp0pU
       - key: DEFAULT_FROM_EMAIL
         value: otp@teamnexterp.com
       - key: DEBUG
