@@ -1223,7 +1223,7 @@ def send_dashboard_email(request):
                 body,
                 settings.DEFAULT_FROM_EMAIL,
                 [to],
-                fail_silently=True
+                fail_silently=False  # Catch errors to prevent silent backend failure
             )
 
         except Exception:
