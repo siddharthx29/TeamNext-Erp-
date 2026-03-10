@@ -124,29 +124,22 @@ CSRF_TRUSTED_ORIGINS = [
 # Email Settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp-relay.brevo.com")
-# Defensive parsing of EMAIL_PORT
-try:
-    EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587") or "587")
-except (ValueError, TypeError):
-    EMAIL_PORT = 587
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 465))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
 
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
-EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() == "true"
+EMAIL_TIMEOUT = 30
 
-# Ensure DEFAULT_FROM_EMAIL is always a valid string format to avoid SMTP errors
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL") or EMAIL_HOST_USER or 'otp@teamnexterp.com'
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
 # Session settings for better reliability on Render
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-# Added timeout to prevent hanging on SMTP connection
-EMAIL_TIMEOUT = 10 
 
 # Show errors in terminal when DEBUG=False
 LOGGING = {
