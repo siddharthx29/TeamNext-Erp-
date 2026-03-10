@@ -189,7 +189,7 @@
         <h2>Login with OTP</h2>
         <p style="text-align: center; margin-bottom: 20px; opacity: 0.8;">Enter your registered email to receive OTP</p>
 
-        <form method="POST" action="/login-otp/">
+        <form method="POST" action="{% url 'send_otp' %}">
             {% csrf_token %}
             <input name="email" type="email" placeholder="Enter your email" required>
             <button type="submit">Send OTP</button>

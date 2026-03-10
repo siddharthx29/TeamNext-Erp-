@@ -14,8 +14,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-temp-key-change-this')
 
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-ALLOWED_HOSTS = ["teamnexterp.com", "www.teamnexterp.com", ".onrender.com", "localhost", "127.0.0.1", "*"]
+DEBUG = True
+ALLOWED_HOSTS = [
+    "teamnexterp.com",
+    "www.teamnexterp.com",
+    ".onrender.com"
+]
 
 # Tell Django it's behind a proxy (Required for Render HTTPS)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -27,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
+    'django.contrib.messages',   # must exist
     'django.contrib.staticfiles',
     'myapp',
 ]
@@ -40,7 +44,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -68,6 +71,7 @@ if 'DATABASE_URL' in os.environ:
         'default': dj_database_url.config(
             conn_max_age=600,
             conn_health_checks=True,
+            ssl_require={'sslmode': 'require'} if os.environ.get('DATABASE_URL','').startswith('postgres') else False
         )
     }
 else:
@@ -109,7 +113,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://*.onrender.com', 'https://*.teamnexterp.com', 'https://teamnexterp.com']
+CSRF_TRUSTED_ORIGINS = [
+    "https://teamnexterp.com",
+    "https://www.teamnexterp.com",
+    "https://*.onrender.com"
+]
 
 # Email Settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -129,6 +137,9 @@ EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() == "true"
 
 # Ensure DEFAULT_FROM_EMAIL is always a valid string format to avoid SMTP errors
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL") or EMAIL_HOST_USER or 'otp@teamnexterp.com'
+
+# Added timeout to prevent hanging on SMTP connection
+EMAIL_TIMEOUT = 10 
 
 # Show errors in terminal when DEBUG=False
 LOGGING = {
