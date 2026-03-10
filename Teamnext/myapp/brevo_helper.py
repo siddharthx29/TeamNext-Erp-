@@ -9,21 +9,34 @@ def send_brevo_email(to_emails, subject, html_content, plain_text=None):
     Send email via Brevo HTTP API (works on Render free plan).
     SMTP port 587 is blocked by Render, but HTTPS API works fine.
     
-    to_emails: list of email strings e.g. ['user@example.com']
+    to_emails: list or string of recipient email(s)
     subject: string
     html_content: HTML string
     plain_text: optional plain text fallback
     """
-    api_key = "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"
+    # Priority: Environment variable, then hardcoded fallback
+    api_key = os.environ.get("BREVO_API_KEY")
+    
+    if not api_key:
+        # Fallback to current working key if not set in environment
+        api_key = "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"
+
     from_email = os.environ.get("DEFAULT_FROM_EMAIL", "otp@teamnexterp.com")
-    from_name = "TeamNext ERP"
+    from_name = os.environ.get("DEFAULT_FROM_NAME", "TeamNext ERP")
 
     if not api_key:
-        raise Exception("BREVO_API_KEY not set in environment variables")
+        raise Exception("BREVO_API_KEY not set in environment variables and no fallback provided")
+
+    # Robust handling for to_emails: convert single string to list
+    if isinstance(to_emails, str):
+        to_emails = [to_emails]
+    
+    if not to_emails:
+        raise Exception("No recipient emails provided")
 
     payload = {
         "sender": {"name": from_name, "email": from_email},
-        "to": [{"email": e} for e in to_emails],
+        "to": [{"email": e.strip()} for e in to_emails if e and isinstance(e, str) and e.strip()],
         "subject": subject,
         "htmlContent": html_content,
     }
