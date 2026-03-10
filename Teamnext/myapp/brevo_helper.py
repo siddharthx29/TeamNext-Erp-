@@ -14,7 +14,7 @@ def send_brevo_email(to_emails, subject, html_content, plain_text=None):
     html_content: HTML string
     plain_text: optional plain text fallback
     """
-    api_key = os.environ.get("BREVO_API_KEY") or os.environ.get("EMAIL_HOST_PASSWORD")
+    api_key = "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"
     from_email = os.environ.get("DEFAULT_FROM_EMAIL", "otp@teamnexterp.com")
     from_name = "TeamNext ERP"
 
