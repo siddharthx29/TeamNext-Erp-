@@ -1,12 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.http import HttpResponse
+from django.contrib.sitemaps.views import sitemap
+from myapp.sitemaps import StaticViewSitemap
 
-def google_verify(request):
-    return HttpResponse("google-site-verification: google05aabfcd698e02fd.html", content_type="text/html")
+sitemaps = {
+    'static': StaticViewSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("google05aabfcd698e02fd.html", google_verify),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}),
     path('', include('myapp.urls')),
 ]
