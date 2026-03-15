@@ -1,30 +1,32 @@
 ﻿import random
-
 import time
 
+from datetime import timedelta, datetime
+
 from django.shortcuts import render, redirect
-
 from django.contrib import messages
-
 from django.conf import settings
-
-from django.http import JsonResponse, HttpResponseBadRequest
-
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-
 from django.views.decorators.http import require_POST
-
 from django.db.models import Sum, Count, Avg, F
 from django.utils import timezone
-from datetime import timedelta, datetime
 
 from .brevo_helper import send_brevo_email
 from .models import (
-    Company, Employee, Project, ProjectMember, Ticket, ChatMessage, 
+    Company, Employee, Project, ProjectMember, Ticket, ChatMessage,
     EmailMessage, LeaveRequest, SocialItem, Department,
     Invoice, Expense, Payroll, VendorPayment, BankTransaction,
     InventoryItem, Attendance
 )
+
+
+def ads_txt(request):
+    return HttpResponse(
+        "google.com, pub-3585674846945171, DIRECT, f08c47fec0942fa0",
+        content_type="text/plain"
+    )
+
 
 def login_view(request):
 
