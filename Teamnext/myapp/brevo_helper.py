@@ -14,12 +14,7 @@ def send_brevo_email(to_emails, subject, html_content, plain_text=None):
     html_content: HTML string
     plain_text: optional plain text fallback
     """
-    # Priority: Environment variable, then hardcoded fallback
     api_key = os.environ.get("BREVO_API_KEY")
-    
-    if not api_key:
-        # Fallback to current working key if not set in environment
-        api_key = "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"
 
     from_email = os.environ.get("DEFAULT_FROM_EMAIL", "otp@teamnexterp.com")
     from_name = os.environ.get("DEFAULT_FROM_NAME", "TeamNext ERP")
