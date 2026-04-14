@@ -1,60 +1,47 @@
-<<<<<<< HEAD
-🚀 Office ERP Management System
-Django Full-Stack Web Application
+TeamNext ERP
 
-A complete Office/Enterprise Resource Planning (ERP) Management System built using Django that helps organizations manage employees, courses/projects, attendance, tasks, and administration efficiently through a centralized web platform.
+A web-based ERP (Enterprise Resource Planning) system built using Django and SQLite, designed to manage organizational workflows, employees, and tasks in a centralized platform.
 
-This project demonstrates full-stack development skills including backend logic, database design, authentication, and responsive frontend UI.
-
-📌 Features
-👤 Authentication
-
-User Login / Logout
-
-Role-based access (Admin / Staff / User)
-
-Secure session handling
-
-🧑‍💼 Employee Management
-
-Add / Edit / Delete employees
-
-Employee profiles
-
-Department mapping
-
-📚 Course / Project Module
-
-Create and manage courses/projects
-
-Assign instructors/staff
-
-Track details
-
-📅 Attendance Management
-
-Mark attendance
-
-View reports
-
-Monthly summaries
-
-🗂 Task / Workflow Tracking
-
-Assign tasks
-
-Status updates
-
-Progress monitoring
-
-🛠 Admin Dashboard
-
-Centralized control panel
-
-Database operations
-
-Reports & analytics
-=======
-# Enterprise-Management-System-
->>>>>>> 1bbc4f4b52f520c15fc94ac946ff2c570f225e06
->>>>>>> https://teamnexterp.com/
+🚀 Features
+User authentication (Login / Logout)
+Employee management system
+Task & project tracking
+Admin dashboard (Django Admin)
+CRUD operations using Django ORM
+Lightweight SQLite database
+🛠️ Tech Stack
+Backend: Django (Python)
+Frontend: HTML, CSS, Bootstrap
+Database: SQLite3
+Version Control: Git
+📁 Project Structure
+teamnext_erp/
+│── manage.py
+│── db.sqlite3
+│
+├── teamnext_erp/
+│   ├── settings.py
+│   ├── urls.py
+│   └── asgi.py / wsgi.py
+│
+├── app/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── admin.py
+│   └── templates/
+│
+└── static/
+⚙️ Getting Started
+1. Clone the repository
+git clone https://github.com/your-username/teamnext-erp.git
+cd teamnext-erp
+2. Create virtual environment
+python -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+3. Install dependencies
+pip install -r requirements.txt
+4. Apply migrations
+python manage.py migrate
+5. Run the server
+python manage.py runserver
