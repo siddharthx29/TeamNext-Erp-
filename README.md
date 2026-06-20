@@ -1,4 +1,4 @@
-TeamNext ERP
+TeamNext ERP 
 
 A web-based ERP (Enterprise Resource Planning) system built using Django and SQLite, designed to manage organizational workflows, employees, and tasks in a centralized platform.
 
